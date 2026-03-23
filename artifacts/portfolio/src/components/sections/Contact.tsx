@@ -32,6 +32,7 @@ export default function Contact() {
     setStatusMessage("");
 
     let succeeded = false;
+    let errMsg = "";
 
     try {
       const response = await fetch("/api/contact", {
@@ -48,10 +49,10 @@ export default function Contact() {
         succeeded = true;
       } else {
         const data = await response.json().catch(() => ({})) as Record<string, unknown>;
-        setStatusMessage((data.error as string) || "Failed to send message. Please try again.");
+        errMsg = (data.error as string) || "Failed to send message. Please try again.";
       }
     } catch {
-      setStatusMessage("Network error. Please check your connection and try again.");
+      errMsg = "Network error. Please check your connection and try again.";
     } finally {
       setIsSubmitting(false);
     }
@@ -65,8 +66,9 @@ export default function Contact() {
       });
     } else {
       setStatus("error");
+      setStatusMessage(errMsg);
       toast.error("Failed to send message", {
-        description: statusMessage || "Please try again.",
+        description: errMsg,
       });
     }
   };

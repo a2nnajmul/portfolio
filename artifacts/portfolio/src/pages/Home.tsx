@@ -1,5 +1,4 @@
 import { Suspense, lazy } from "react";
-import Preloader from "@/components/Preloader";
 import Navbar from "@/components/sections/Navbar";
 import Hero from "@/components/sections/Hero";
 import Footer from "@/components/sections/Footer";
@@ -14,7 +13,6 @@ const Contact = lazy(() => import("@/components/sections/Contact"));
 export default function Home() {
   return (
     <main className="relative min-h-screen">
-      <Preloader />
       <Navbar />
 
       {/* Eagerly loaded for fast LCP */}
