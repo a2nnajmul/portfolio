@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "sonner";
 import { FadeIn } from "@/components/FadeIn";
 import { MapPin, Phone, Mail, Send, Loader2, CheckCircle2, AlertCircle, X } from "lucide-react";
 
@@ -59,8 +60,14 @@ export default function Contact() {
       setFormData({ name: "", email: "", message: "", hp: "" });
       setStatus("success");
       setStatusMessage("Message sent! I'll get back to you soon.");
+      toast.success("Message sent!", {
+        description: "I'll get back to you soon.",
+      });
     } else {
       setStatus("error");
+      toast.error("Failed to send message", {
+        description: statusMessage || "Please try again.",
+      });
     }
   };
 
