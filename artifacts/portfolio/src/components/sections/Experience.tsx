@@ -32,7 +32,7 @@ export default function Experience() {
 
         <div className="relative border-l-4 border-primary/30 ml-4 md:ml-8 space-y-12 pb-8">
           {experiences.map((exp, i) => (
-            <FadeIn key={i} delay={((i + 1) * 100) as any} className="relative pl-8 md:pl-12">
+            <FadeIn key={i} delay={(i + 1) * 100} className="relative pl-8 md:pl-12">
               {/* Timeline Dot */}
               <div className="absolute top-0 left-[-11px] w-5 h-5 rounded-full bg-primary border-4 border-secondary shadow-[0_0_0_4px_rgba(249,115,22,0.2)]" />
               

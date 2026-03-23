@@ -2,33 +2,41 @@ import { Suspense, lazy } from "react";
 import Preloader from "@/components/Preloader";
 import Navbar from "@/components/sections/Navbar";
 import Hero from "@/components/sections/Hero";
+import Contact from "@/components/sections/Contact";
+import Footer from "@/components/sections/Footer";
 
-// Lazy load sections for better performance
+// Lazy load heavier sections for performance
 const About = lazy(() => import("@/components/sections/About"));
 const Skills = lazy(() => import("@/components/sections/Skills"));
 const Experience = lazy(() => import("@/components/sections/Experience"));
 const Portfolio = lazy(() => import("@/components/sections/Portfolio"));
-const Contact = lazy(() => import("@/components/sections/Contact"));
-const Footer = lazy(() => import("@/components/sections/Footer"));
 
 export default function Home() {
   return (
     <main className="relative min-h-screen">
       <Preloader />
       <Navbar />
-      
-      {/* Eagerly loaded hero for fast LCP */}
+
+      {/* Eagerly loaded for fast LCP */}
       <Hero />
-      
-      {/* Lazy loaded sections wrapped in suspense */}
-      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+
+      {/* Lazy loaded visual sections */}
+      <Suspense fallback={<div className="py-24 bg-background" />}>
         <About />
-        <Skills />
-        <Experience />
-        <Portfolio />
-        <Contact />
-        <Footer />
       </Suspense>
+      <Suspense fallback={<div className="py-24 bg-secondary/50" />}>
+        <Skills />
+      </Suspense>
+      <Suspense fallback={<div className="py-24 bg-background" />}>
+        <Experience />
+      </Suspense>
+      <Suspense fallback={<div className="py-24 bg-secondary/30" />}>
+        <Portfolio />
+      </Suspense>
+
+      {/* Eagerly loaded: critical for user interaction */}
+      <Contact />
+      <Footer />
     </main>
   );
 }

@@ -27,7 +27,7 @@ export default function Portfolio() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {portfolioItems.map((item, i) => (
-            <FadeIn key={item.id} delay={((i % 3 + 1) * 100) as any}>
+            <FadeIn key={item.id} delay={(i % 3 + 1) * 100}>
               <div className="group relative aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer shadow-lg bg-card border border-border">
                 {/* Simulated Image Background with Gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-80 group-hover:scale-110 transition-transform duration-700 ease-out`} />

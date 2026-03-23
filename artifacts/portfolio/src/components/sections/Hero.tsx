@@ -1,5 +1,5 @@
 import { Facebook, Twitter, Instagram, Mail, ArrowRight, Download } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const socialLinks = [
   { icon: Facebook, href: "https://facebook.com/a2nnajmul", label: "Facebook" },
@@ -8,19 +8,20 @@ const socialLinks = [
   { icon: Mail, href: "mailto:a2nnajmul@gmail.com", label: "Email" },
 ];
 
-export default function Hero() {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.2, delayChildren: 0.1 }
-    }
-  };
+const containerVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.2, delayChildren: 0.1 },
+  },
+};
 
-  const itemVariants = {
-    hidden: { opacity: 0, x: -30 },
-    visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
-  };
+const itemVariants: Variants = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } },
+};
+
+export default function Hero() {
 
   return (
     <section id="home" className="relative min-h-screen flex items-center pt-20 overflow-hidden">
@@ -104,18 +105,22 @@ export default function Hero() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 1, ease: "easeOut" }}
             className="order-1 lg:order-2 relative mx-auto w-full max-w-[480px]"
           >
             <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border-8 border-background shadow-2xl z-10 bg-card">
-              {/* Fallback pattern while image loads, though eager load is preferred */}
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent"></div>
-              <img 
-                src={`${import.meta.env.BASE_URL}profile-banner.jpg`} 
-                alt="Najmul Alam"
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ objectPosition: "75% center" }}
-              />
+              <picture className="absolute inset-0 w-full h-full">
+                <source srcSet={`${import.meta.env.BASE_URL}profile-banner.webp`} type="image/webp" />
+                <img
+                  src={`${import.meta.env.BASE_URL}profile-banner.jpg`}
+                  alt="Najmul Alam — Graphic Designer"
+                  className="w-full h-full object-cover"
+                  style={{ objectPosition: "75% center" }}
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </picture>
             </div>
             
             {/* Decorative background blocks behind image */}

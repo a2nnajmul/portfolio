@@ -1,4 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
+import { Resend } from "resend";
 
 const router: IRouter = Router();
 
@@ -46,23 +47,17 @@ router.post("/contact", async (req: Request, res: Response) => {
 
   if (resendKey) {
     try {
-      const response = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from: "Portfolio Contact <onboarding@resend.dev>",
-          to: ["a2nnajmul@gmail.com"],
-          subject: `Portfolio Contact from ${sanitized.name}`,
-          text: `Name: ${sanitized.name}\nEmail: ${sanitized.email}\n\nMessage:\n${sanitized.message}`,
-          reply_to: sanitized.email,
-        }),
+      const resend = new Resend(resendKey);
+      const { error } = await resend.emails.send({
+        from: "Portfolio Contact <onboarding@resend.dev>",
+        to: ["a2nnajmul@gmail.com"],
+        subject: `Portfolio Contact from ${sanitized.name}`,
+        text: `Name: ${sanitized.name}\nEmail: ${sanitized.email}\n\nMessage:\n${sanitized.message}`,
+        replyTo: sanitized.email,
       });
 
-      if (!response.ok) {
-        req.log.error({ status: response.status }, "Resend API error");
+      if (error) {
+        req.log.error({ error }, "Resend API error");
         res.status(500).json({ success: false, error: "Failed to send email. Please try again." });
         return;
       }
@@ -76,7 +71,7 @@ router.post("/contact", async (req: Request, res: Response) => {
   } else {
     req.log.info(
       { name: sanitized.name, email: sanitized.email, message: sanitized.message },
-      "Contact form submission (no RESEND_API_KEY set — logging only)"
+      "Contact form submission (no RESEND_API_KEY — logging only)"
     );
   }
 

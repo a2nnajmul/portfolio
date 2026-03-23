@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { FadeIn } from "@/components/FadeIn";
 import { MapPin, Phone, Mail, Send, Loader2, CheckCircle2, AlertCircle, X } from "lucide-react";
 
@@ -16,16 +16,6 @@ export default function Contact() {
     hp: "",
   });
 
-  useEffect(() => {
-    if (status) {
-      const timer = setTimeout(() => {
-        setStatus(null);
-        setStatusMessage("");
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [status]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -38,6 +28,9 @@ export default function Contact() {
 
     setIsSubmitting(true);
     setStatus(null);
+    setStatusMessage("");
+
+    let succeeded = false;
 
     try {
       const response = await fetch("/api/contact", {
@@ -51,19 +44,23 @@ export default function Contact() {
       });
 
       if (response.ok) {
-        setStatus("success");
-        setStatusMessage("Message sent! I'll get back to you soon.");
-        setFormData({ name: "", email: "", message: "", hp: "" });
+        succeeded = true;
       } else {
-        const data = await response.json().catch(() => ({}));
-        setStatus("error");
-        setStatusMessage(data.error || "Failed to send message. Please try again.");
+        const data = await response.json().catch(() => ({})) as Record<string, unknown>;
+        setStatusMessage((data.error as string) || "Failed to send message. Please try again.");
       }
     } catch {
-      setStatus("error");
       setStatusMessage("Network error. Please check your connection and try again.");
     } finally {
       setIsSubmitting(false);
+    }
+
+    if (succeeded) {
+      setFormData({ name: "", email: "", message: "", hp: "" });
+      setStatus("success");
+      setStatusMessage("Message sent! I'll get back to you soon.");
+    } else {
+      setStatus("error");
     }
   };
 
@@ -134,32 +131,49 @@ export default function Contact() {
             <div className="bg-card rounded-3xl p-8 md:p-10 border border-border shadow-lg">
               <h3 className="text-2xl font-bold text-foreground mb-8">Send Me a Message</h3>
 
-              {/* Status Banner */}
-              {status && (
-                <div
-                  role="alert"
-                  className={`flex items-start gap-3 p-4 mb-6 rounded-xl border text-sm font-medium transition-all ${
-                    status === "success"
-                      ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-950/40 dark:border-green-800 dark:text-green-300"
-                      : "bg-red-50 border-red-200 text-red-800 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300"
-                  }`}
-                >
-                  {status === "success" ? (
-                    <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
-                  ) : (
-                    <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
-                  )}
-                  <span className="flex-1">{statusMessage}</span>
-                  <button
-                    type="button"
-                    onClick={() => setStatus(null)}
-                    className="ml-auto opacity-60 hover:opacity-100 transition-opacity"
-                    aria-label="Dismiss"
+              {/* Status Banner — always mounted, visibility controlled by status */}
+              <div
+                role="status"
+                aria-live="polite"
+                aria-atomic="true"
+              >
+                {status === "success" && (
+                  <div
+                    role="alert"
+                    aria-label="Message sent successfully"
+                    className="flex items-start gap-3 p-4 mb-6 rounded-xl border bg-green-50 border-green-200 text-green-800 dark:bg-green-950/40 dark:border-green-800 dark:text-green-300 text-sm font-medium"
                   >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              )}
+                    <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" />
+                    <span className="flex-1">{statusMessage}</span>
+                    <button
+                      type="button"
+                      onClick={() => { setStatus(null); setStatusMessage(""); }}
+                      className="ml-auto opacity-60 hover:opacity-100 transition-opacity"
+                      aria-label="Dismiss"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+                {status === "error" && (
+                  <div
+                    role="alert"
+                    aria-label="Error sending message"
+                    className="flex items-start gap-3 p-4 mb-6 rounded-xl border bg-red-50 border-red-200 text-red-800 dark:bg-red-950/40 dark:border-red-800 dark:text-red-300 text-sm font-medium"
+                  >
+                    <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                    <span className="flex-1">{statusMessage}</span>
+                    <button
+                      type="button"
+                      onClick={() => { setStatus(null); setStatusMessage(""); }}
+                      className="ml-auto opacity-60 hover:opacity-100 transition-opacity"
+                      aria-label="Dismiss"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                )}
+              </div>
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Honeypot field - visually hidden */}

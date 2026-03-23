@@ -27,7 +27,7 @@ export default function Skills() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {coreSkills.map((skill, i) => (
-            <FadeIn key={skill.title} delay={((i + 1) * 100) as any} className="h-full">
+            <FadeIn key={skill.title} delay={(i + 1) * 100} className="h-full">
               <div className="group h-full bg-card rounded-3xl p-8 border border-border shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300 relative overflow-hidden flex flex-col items-center text-center">
                 {/* Hover Glow */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/20 rounded-full blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
