@@ -1,0 +1,14 @@
+name = "najmul-portfolio-contact"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[vars]
+# Set secrets using: wrangler secret put RESEND_API_KEY
+
+[[routes]]
+pattern = "your-domain.pages.dev/api/contact"
+zone_name = "your-domain.com"
+
+# Uncomment and update after deploying to Cloudflare Pages:
+# [env.production]
+# routes = [{ pattern = "najmulalam.com/api/contact", zone_name = "najmulalam.com" }]

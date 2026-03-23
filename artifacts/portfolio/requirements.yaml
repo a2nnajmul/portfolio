@@ -1,0 +1,10 @@
+packages:
+  "framer-motion": "Needed for minimal, smooth hero entrance animations as requested"
+
+images: []
+
+notes:
+  - This is a single-page application (SPA). No wouter/react-router needed.
+  - The contact form submits a POST request to /api/contact. It handles loading and error states locally.
+  - Using Intersection Observer for scroll animations to keep the bundle lightweight.
+  - Profile banner and CV are loaded directly from the public directory.

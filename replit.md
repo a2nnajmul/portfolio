@@ -2,7 +2,7 @@
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+pnpm workspace monorepo using TypeScript. Contains a personal portfolio website for Najmul Alam (student & graphic designer from Bangladesh), plus shared utilities.
 
 ## Stack
 
@@ -10,87 +10,93 @@ pnpm workspace monorepo using TypeScript. Each package manages its own dependenc
 - **Node.js version**: 24
 - **Package manager**: pnpm
 - **TypeScript version**: 5.9
+- **Frontend**: React 19 + Vite + Tailwind CSS v4 + Framer Motion
 - **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+- **Fonts**: Outfit (display) + Inter (body) — Google Fonts
+- **Build**: esbuild (API server), Vite (portfolio)
 
 ## Structure
 
 ```text
-artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
-│   ├── api-spec/           # OpenAPI spec + Orval codegen config
-│   ├── api-client-react/   # Generated React Query hooks
-│   ├── api-zod/            # Generated Zod schemas from OpenAPI
-│   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
+workspace/
+├── artifacts/
+│   ├── api-server/         # Express API server (port 8080, path /api)
+│   ├── portfolio/          # React+Vite portfolio site (port 21113, path /)
+│   └── mockup-sandbox/     # Component preview server for canvas prototyping
+├── lib/                    # Shared libraries (api-spec, api-client-react, api-zod, db)
+├── worker/                 # Cloudflare Worker (worker.js + wrangler.toml) for CF deployment
+│   └── worker.js           # Standalone CF Worker with contact form logic
+├── scripts/                # Utility scripts
+├── pnpm-workspace.yaml
+├── tsconfig.base.json
+├── tsconfig.json
+└── package.json
 ```
+
+## Portfolio (artifacts/portfolio)
+
+A single-page portfolio website for **Najmul Alam** — student & graphic designer from Bangladesh.
+
+### Sections (in order)
+1. **Hero** — Profile photo, name, title, bio, "Available for new projects" badge, CTA buttons (Download CV, Hire Me)
+2. **About** — 3-tab card: Education & Training / Languages / Extra-Curricular
+3. **Skills** — 4 core skill cards (Graphic Design, UI/UX, Adobe Illustrator, Photoshop) + tech/office pills
+4. **Experience** — Timeline: Facebook (Ads Marketing), YouTube (Web Solution)
+5. **Portfolio** — 6-item gradient grid with hover overlay
+6. **Contact** — Info cards (email/phone/location) + contact form with inline success/error feedback
+7. **Footer** — Social links (Facebook/Twitter/Instagram), quick links, copyright
+
+### Key Design Details
+- **Primary color**: Orange gradient (`#f97316` → `#ea580c`)
+- **Dark mode**: Dark navy background (`hsl(220 15% 12%)`) — toggle stored in `localStorage` key `portfolio-theme`
+- **Fonts**: Outfit (display headings) + Inter (body text), loaded via Google Fonts
+- **Animations**: Framer Motion on Hero, CSS IntersectionObserver `FadeIn` component for scroll reveals
+- **Performance**: Code-split with `React.lazy()` + `Suspense` for all sections except Navbar & Hero (eager for LCP)
+
+### Contact Form
+- **Frontend**: `artifacts/portfolio/src/components/sections/Contact.tsx` — form with honeypot field, inline status banner
+- **Backend**: `artifacts/api-server/src/routes/contact.ts` — validates fields, sends via Resend API (gracefully degrades if `RESEND_API_KEY` not set)
+- **Target email**: a2nnajmul@gmail.com
+
+### Static Assets in `public/`
+- `profile-banner.jpg` — profile photo, displayed with `objectPosition: "75% center"` to center on face
+- `Najmul_Alam_CV.pdf` — downloadable CV
+- `_headers` — Cloudflare Pages cache control headers
+- `_redirects` — SPA fallback for Cloudflare Pages
+
+### Cloudflare Deployment
+- `worker/worker.js` — standalone Cloudflare Worker handling both static serving and contact API
+- `worker/wrangler.toml` — Wrangler config (`RESEND_API_KEY` secret required)
+- Static build output: `artifacts/portfolio/dist/public/`
+
+## API Server (artifacts/api-server)
+
+Express 5 API, mounted at path `/api`. Routes:
+- `GET /api/healthz` — health check
+- `POST /api/contact` — contact form submission
+
+### Contact Route Validation
+- `name`: string, min 2 chars, max 100 chars
+- `email`: valid email format, max 200 chars
+- `message`: string, min 10 chars, max 2000 chars
+- `hp`: honeypot — silently succeeds if non-empty (bot detection)
 
 ## TypeScript & Composite Projects
 
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
+Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references.
 
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
+- **Always typecheck from the root** — run `pnpm run typecheck` (`tsc --build --emitDeclarationOnly`)
+- **`emitDeclarationOnly`** — only emits `.d.ts`; bundling is by esbuild/vite
+- **Project references** — when A depends on B, A's tsconfig lists B in references
 
 ## Root Scripts
 
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+- `pnpm run build` — typecheck + recursively build all packages
+- `pnpm run typecheck` — `tsc --build --emitDeclarationOnly`
 
-## Packages
+## Personal Info (Najmul Alam)
 
-### `artifacts/api-server` (`@workspace/api-server`)
-
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
-
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
-
-### `lib/db` (`@workspace/db`)
-
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
-
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
-
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
-
-### `lib/api-spec` (`@workspace/api-spec`)
-
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
-
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
-
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
-
-### `lib/api-zod` (`@workspace/api-zod`)
-
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
-
-### `lib/api-client-react` (`@workspace/api-client-react`)
-
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
-
-### `scripts` (`@workspace/scripts`)
-
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+- **Email**: a2nnajmul@gmail.com
+- **Phone**: (+880) 1793908183
+- **Location**: Panchua, Kapasia, 1743, Dhaka, Bangladesh
+- **Social**: Facebook/Twitter/Instagram — @a2nnajmul
