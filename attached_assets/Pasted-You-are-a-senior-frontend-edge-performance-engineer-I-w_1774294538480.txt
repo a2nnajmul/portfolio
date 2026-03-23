@@ -1,0 +1,119 @@
+You are a senior frontend + edge performance engineer.
+
+I want you to build a modern, ultra-fast portfolio website optimized specifically for Cloudflare Pages + Cloudflare Edge Network.
+
+I will provide:
+1. A reference design image
+2. A banner/profile image
+3. My CV file
+
+Your job is to create a complete, production-ready React portfolio with extreme performance optimization and smooth UI.
+
+========================
+⚡ CORE STACK
+========================
+- React + Vite (MANDATORY)
+- Tailwind CSS
+- Framer Motion (lightweight usage only)
+- Deploy-ready for Cloudflare Pages
+- Use static generation (NO heavy SSR)
+
+========================
+🚀 EDGE PERFORMANCE (CRITICAL)
+========================
+- Optimize for Cloudflare CDN (global edge delivery)
+- Code splitting (React.lazy + dynamic imports)
+- Lazy load all images and sections
+- Use modern image formats (WebP/AVIF)
+- Compress and optimize all assets
+- Use minimal dependencies (avoid heavy libraries)
+- Tree-shaking enabled
+- Remove unused CSS (Tailwind purge)
+
+- Target:
+  - First Contentful Paint < 1.5s
+  - Lighthouse Score 95+
+
+========================
+🌐 CLOUDFLARE-SPECIFIC SETUP
+========================
+- Build output must be compatible with Cloudflare Pages
+- Output directory: "dist"
+- Add `_headers` file for caching:
+  - Cache static assets aggressively
+  - Example:
+    /*
+      Cache-Control: public, max-age=31536000, immutable
+
+- Add `_redirects` file for SPA routing:
+  - /*    /index.html   200
+
+- Ensure no Node.js backend dependency
+- Fully static + edge-deliverable
+
+========================
+📱 UI/UX DESIGN
+========================
+- Follow reference layout but improve to premium modern UI
+- Clean spacing, typography, and grid system
+- Orange gradient + dark/white theme
+- Glassmorphism + soft shadows
+
+========================
+🎯 SECTIONS
+========================
+- Hero (with CV download + image)
+- About (tab system)
+- Skills (interactive cards)
+- Experience (timeline)
+- Portfolio (grid + hover animation)
+- Contact (simple + clean)
+- Footer
+
+========================
+✨ INTERACTIONS
+========================
+- Smooth scrolling
+- Scroll-triggered animations (optimized)
+- Sticky navbar
+- Mobile hamburger menu
+- Hover micro-interactions
+
+========================
+📱 MOBILE OPTIMIZATION
+========================
+- Mobile-first design
+- Fully responsive
+- Optimized touch targets
+- No layout shift (CLS optimized)
+
+========================
+🧠 ADVANCED OPTIMIZATION
+========================
+- Preload critical assets (fonts, hero image)
+- Use font-display: swap
+- Avoid render-blocking resources
+- Use Intersection Observer for lazy loading
+- Minimize main thread work
+
+========================
+📦 OUTPUT
+========================
+- Full project code (React + Vite)
+- Clean folder structure
+- Ready to deploy on Cloudflare Pages
+- Include:
+  - package.json
+  - vite.config.js
+  - _headers
+  - _redirects
+
+========================
+⚠️ IMPORTANT
+========================
+- PRIORITIZE SPEED over unnecessary animations
+- Keep animations smooth but lightweight
+- Do NOT overuse heavy libraries
+- Final result must feel instant, smooth, and premium
+
+Now generate the full project.

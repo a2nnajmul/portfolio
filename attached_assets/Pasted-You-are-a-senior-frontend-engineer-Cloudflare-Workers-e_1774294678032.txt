@@ -1,0 +1,159 @@
+You are a senior frontend engineer + Cloudflare Workers expert + performance optimization specialist.
+
+I want you to build a production-ready, ultra-fast portfolio website optimized for Cloudflare Pages + Cloudflare Workers (edge backend).
+
+I will provide:
+1. A reference design image
+2. A banner/profile image
+3. My CV file
+
+Your job is to generate a complete project with frontend + edge backend + extreme performance optimization targeting near 100/100 Lighthouse score.
+
+========================
+⚡ TECH STACK
+========================
+Frontend:
+- React + Vite
+- Tailwind CSS
+- Framer Motion (minimal, optimized)
+
+Backend:
+- Cloudflare Workers (for contact form API)
+- No traditional server (edge-only)
+
+========================
+🚀 PERFORMANCE (HARDCORE MODE)
+========================
+- Target Lighthouse:
+  - Performance: 100
+  - Accessibility: 100
+  - Best Practices: 100
+  - SEO: 100
+
+- Implement:
+  - Code splitting (React.lazy)
+  - Route-based chunking
+  - Lazy load images + components
+  - Use AVIF/WebP images
+  - Inline critical CSS
+  - Preload hero image + fonts
+  - Use system fonts or optimized Google Fonts
+  - font-display: swap
+
+- Zero render-blocking resources
+- Minimize JS bundle size
+- Avoid unnecessary re-renders
+- Use Intersection Observer
+- Optimize CLS, LCP, TBT
+
+========================
+🌐 CLOUDFLARE EDGE SETUP
+========================
+- Deploy frontend on Cloudflare Pages
+- Deploy backend using Cloudflare Workers
+
+- Include:
+  1. `_headers` file:
+     /*
+       Cache-Control: public, max-age=31536000, immutable
+
+  2. `_redirects` file:
+     /*    /index.html   200
+
+- Ensure SPA routing works perfectly
+
+========================
+📩 CONTACT FORM (WORKERS API)
+========================
+- Build a contact form in frontend
+- Create a Cloudflare Worker API endpoint:
+  POST /api/contact
+
+- The Worker should:
+  - Validate input (name, email, message)
+  - Prevent spam (basic rate limit or honeypot)
+  - Send email using:
+    → Resend API OR EmailJS OR SMTP via API
+
+- Return JSON response:
+  { success: true }
+
+- Handle errors properly
+
+- Frontend:
+  - Show loading state
+  - Show success/error toast
+
+========================
+🎯 UI/UX (PREMIUM)
+========================
+- Follow reference but improve design
+- Modern, clean, premium feel
+- Orange gradient + neutral tones
+- Glassmorphism + soft shadows
+
+========================
+📱 MOBILE-FIRST
+========================
+- Fully responsive
+- Perfect spacing on small screens
+- Optimized touch UX
+- No layout shift
+
+========================
+🧩 SECTIONS
+========================
+- Hero (image + CV download)
+- About (tabbed content)
+- Skills (interactive cards)
+- Experience (timeline)
+- Portfolio (grid + hover)
+- Contact (functional form)
+- Footer
+
+========================
+✨ INTERACTIONS
+========================
+- Smooth scroll
+- Scroll animations (lightweight)
+- Sticky navbar
+- Mobile menu
+- Micro-interactions
+
+========================
+🧠 ADVANCED EDGE OPTIMIZATION
+========================
+- Use fetch with keepalive where needed
+- Cache static assets aggressively
+- Optimize API response time (<100ms edge)
+- Avoid cold start delays
+
+========================
+📦 OUTPUT REQUIRED
+========================
+Provide FULL project:
+
+Frontend:
+- Complete React + Vite project
+- Components properly structured
+
+Backend:
+- Cloudflare Worker code
+- API route: /api/contact
+
+Configs:
+- vite.config.js
+- package.json
+- _headers
+- _redirects
+- wrangler.toml (for Worker)
+
+========================
+⚠️ IMPORTANT
+========================
+- Prioritize speed over visual heaviness
+- Keep animations smooth but minimal
+- Ensure instant loading feel
+- Clean, maintainable, scalable code
+
+Now generate the complete full-stack edge-optimized project.
