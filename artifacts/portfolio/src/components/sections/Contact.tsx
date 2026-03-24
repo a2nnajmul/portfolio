@@ -61,24 +61,22 @@ export default function Contact() {
     let errMsg = "";
 
     try {
-      const response = await fetch("/api/contact", {
+      await apiFetch("/contact", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
           message: formData.message,
         }),
       });
-
-      if (response.ok) {
-        succeeded = true;
-      } else {
-        const data = await response.json().catch(() => ({})) as Record<string, unknown>;
-        errMsg = (data.error as string) || "Failed to send message. Please try again.";
-      }
-    } catch {
-      errMsg = "Network error. Please check your connection and try again.";
+      succeeded = true;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      errMsg = msg.includes("API ") ? msg.replace(/^API \d+:\s*/, "") : "Failed to send message. Please try again.";
+      try {
+        const parsed = JSON.parse(errMsg) as Record<string, unknown>;
+        if (parsed.error) errMsg = parsed.error as string;
+      } catch {}
     } finally {
       setIsSubmitting(false);
     }
