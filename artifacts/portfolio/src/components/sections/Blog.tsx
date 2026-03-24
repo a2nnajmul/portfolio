@@ -19,8 +19,6 @@ export default function Blog() {
     placeholderData: [],
   });
 
-  if (posts.length === 0) return null;
-
   return (
     <section id="blog" className="py-16 md:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,6 +32,11 @@ export default function Blog() {
           </p>
         </FadeIn>
 
+        {posts.length === 0 ? (
+          <FadeIn className="text-center py-8">
+            <p className="text-muted-foreground">No blog posts yet. Check back soon!</p>
+          </FadeIn>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {posts.map((post, i) => (
             <FadeIn key={post.id} delay={(i % 3 + 1) * 100}>
@@ -71,6 +74,7 @@ export default function Blog() {
             </FadeIn>
           ))}
         </div>
+        )}
       </div>
     </section>
   );
