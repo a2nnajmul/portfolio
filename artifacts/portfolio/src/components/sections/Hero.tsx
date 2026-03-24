@@ -27,23 +27,18 @@ export default function Hero() {
       id="home"
       className="relative min-h-screen flex items-center pt-20 overflow-hidden"
     >
-      {/* ── Animated ambient blobs ─────────────────────────────── */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        {/* Large primary glow — top-right */}
         <div className="animate-blob-drift absolute -top-32 right-0 h-[700px] w-[700px] rounded-full bg-primary/10 blur-[130px]" />
-        {/* Secondary glow — bottom-left */}
         <div className="animate-blob-drift-reverse absolute -bottom-24 -left-24 h-[500px] w-[500px] rounded-full bg-primary/6 blur-[100px]" />
-        {/* Accent glow — center slightly right */}
         <div className="animate-blob-drift-slow absolute top-1/3 left-1/2 h-[350px] w-[350px] -translate-x-1/2 rounded-full bg-[#ea580c]/6 blur-[90px]" />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[calc(100vh-5rem)]">
 
-          {/* ── Text Content ──────────────────────────────────────── */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -90,12 +85,10 @@ export default function Hero() {
               Creative Graphic Designer passionate about logo design, UI/UX, and crafting memorable brand identities.
             </motion.p>
 
-            {/* ── CTA Buttons ─────────────────────────────────────── */}
             <motion.div
               variants={itemVariants}
               className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-12"
             >
-              {/* Primary: Download CV — glow pulse + shine sweep */}
               <a
                 href={`${import.meta.env.BASE_URL}Najmul_Alam_CV.pdf`}
                 download
@@ -104,8 +97,6 @@ export default function Hero() {
                 Download CV
                 <Download className="w-5 h-5 group-hover:animate-bounce" />
               </a>
-
-              {/* Secondary: View Work */}
               <button
                 onClick={() =>
                   document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })
@@ -117,7 +108,6 @@ export default function Hero() {
               </button>
             </motion.div>
 
-            {/* ── Social Icons ────────────────────────────────────── */}
             <motion.div
               variants={itemVariants}
               className="flex items-center justify-center lg:justify-start gap-3"
@@ -140,27 +130,19 @@ export default function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* ── Profile Image ──────────────────────────────────────── */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 1.0, ease: "easeOut", delay: 0.15 }}
             className="order-1 lg:order-2 relative mx-auto w-full max-w-[440px] lg:max-w-[500px]"
           >
-            {/* Glow halo behind the card */}
             <div
               aria-hidden="true"
               className="absolute -inset-6 rounded-[3rem] bg-gradient-to-tr from-primary/25 to-[#ea580c]/20 blur-2xl opacity-80 -z-10"
             />
 
-            {/* Image card */}
-            <div
-              className="relative overflow-hidden rounded-[2rem] border-[6px] border-background shadow-2xl bg-card"
-              style={{ aspectRatio: "4 / 5" }}
-            >
-              {/* Subtle tint overlay for text readability (darkens the left-white area on dark mode) */}
+            <div className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden rounded-[2rem] border-[6px] border-background shadow-2xl bg-card">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/10 z-10 pointer-events-none" />
-
               <picture className="absolute inset-0 w-full h-full">
                 <source
                   srcSet={`${import.meta.env.BASE_URL}profile-banner.webp`}
@@ -170,23 +152,13 @@ export default function Hero() {
                   src={`${import.meta.env.BASE_URL}profile-banner.jpg`}
                   alt="Najmul Alam — Graphic Designer"
                   className="w-full h-full object-cover"
-                  style={{
-                    /*
-                     * The banner is a wide landscape image (~3:1 ratio).
-                     * The subject's face is at roughly 85% from the left and
-                     * sits in the upper portion (~top 10–40%) of the image.
-                     * Using "85% top" ensures the face is always fully visible
-                     * in the portrait (4:5) container on every screen size.
-                     */
-                    objectPosition: "85% top",
-                  }}
+                  style={{ objectPosition: "85% top" }}
                   fetchPriority="high"
                   decoding="async"
                 />
               </picture>
             </div>
 
-            {/* Floating decorative shapes */}
             <div
               aria-hidden="true"
               className="animate-float absolute -bottom-6 -left-8 w-44 h-44 bg-card rounded-3xl border border-border/60 -z-20 shadow-xl hidden sm:block"
@@ -197,7 +169,6 @@ export default function Hero() {
               className="animate-float absolute top-10 -right-8 w-20 h-20 rounded-full border-[7px] border-primary/25 -z-20 hidden sm:block"
               style={{ animationDelay: "1.5s" }}
             />
-            {/* Small accent dot */}
             <div
               aria-hidden="true"
               className="absolute bottom-10 -right-4 w-5 h-5 rounded-full bg-primary/60 blur-sm hidden lg:block"
