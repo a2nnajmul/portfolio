@@ -125,7 +125,7 @@ export default function Hero() {
       </div>
 
       <div className="relative w-full aspect-[3/4] sm:aspect-[4/3] md:absolute md:inset-0 md:aspect-auto md:w-full md:h-full overflow-hidden">
-        <BannerPicture className="w-full h-full object-cover object-[75%_center] md:object-[right_center]" />
+        <BannerPicture className="w-full h-full object-cover object-[right_center]" />
 
         <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-[#f5f0eb] to-transparent dark:from-gray-900 md:hidden pointer-events-none" />
 
