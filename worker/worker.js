@@ -326,6 +326,7 @@ export default {
         const id = msgMatch[1];
         const messages = await getJson(kv, "messages", []);
         const filtered = messages.filter((m) => m.id !== id);
+        if (filtered.length === messages.length) return json({ error: "Not found" }, 404, origin);
         await kv.put("messages", JSON.stringify(filtered));
         return json({ success: true }, 200, origin);
       }
