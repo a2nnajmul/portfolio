@@ -25,7 +25,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative h-[100svh] min-h-[600px] max-h-[1000px] flex items-end md:items-center overflow-hidden bg-[#f5f0eb] dark:bg-gray-900"
+      className="relative h-[100svh] min-h-[500px] max-h-[1000px] flex items-end md:items-center overflow-hidden bg-[#f5f0eb] dark:bg-gray-900"
     >
       <div className="absolute inset-0 w-full h-full">
         <picture className="block w-full h-full">
