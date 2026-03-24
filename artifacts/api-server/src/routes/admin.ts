@@ -1,5 +1,5 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { createToken, requireAuth } from "../lib/auth.js";
+import { createToken, requireAuth, checkAdminPassword, changeAdminPassword } from "../lib/auth.js";
 import { getJson, putJson } from "../lib/kv.js";
 import { randomUUID } from "node:crypto";
 
@@ -34,16 +34,27 @@ interface Message {
   email: string;
   message: string;
   createdAt: string;
+  read?: boolean;
+}
+
+interface BlogPost {
+  id: string;
+  title: string;
+  description: string;
+  content: string;
+  imageUrl: string;
+  date: string;
+  createdAt: string;
 }
 
 router.post("/admin/login", (req: Request, res: Response) => {
   const { password } = req.body ?? {};
   const adminPassword = process.env["ADMIN_PASSWORD"];
-  if (!adminPassword || adminPassword.trim() === "") {
+  if (!adminPassword && !getJson<string | null>("admin_password_hash", null)) {
     res.status(503).json({ error: "Admin password not configured" });
     return;
   }
-  if (typeof password !== "string" || password !== adminPassword) {
+  if (typeof password !== "string" || !checkAdminPassword(password)) {
     res.status(401).json({ error: "Invalid password" });
     return;
   }
@@ -138,6 +149,116 @@ router.delete("/admin/messages/:id", requireAuth, (req: Request, res: Response) 
   if (filtered.length === messages.length) { res.status(404).json({ error: "Not found" }); return; }
   putJson("messages", filtered);
   res.json({ success: true });
+});
+
+router.put("/admin/messages/:id/read", requireAuth, (req: Request, res: Response) => {
+  const messages = getJson<Message[]>("messages", []);
+  const idx = messages.findIndex((m) => m.id === req.params["id"]);
+  if (idx === -1) { res.status(404).json({ error: "Not found" }); return; }
+  messages[idx] = { ...messages[idx], read: !messages[idx].read };
+  putJson("messages", messages);
+  res.json(messages[idx]);
+});
+
+router.get("/admin/blog", requireAuth, (_req: Request, res: Response) => {
+  res.json(getJson<BlogPost[]>("blog", []));
+});
+
+router.post("/admin/blog", requireAuth, (req: Request, res: Response) => {
+  const posts = getJson<BlogPost[]>("blog", []);
+  const body = req.body as Partial<BlogPost>;
+  const post: BlogPost = {
+    id: randomUUID(),
+    title: String(body.title ?? "").slice(0, 200),
+    description: String(body.description ?? "").slice(0, 500),
+    content: String(body.content ?? "").slice(0, 50000),
+    imageUrl: String(body.imageUrl ?? "").slice(0, 500),
+    date: String(body.date ?? new Date().toISOString().split("T")[0]).slice(0, 20),
+    createdAt: new Date().toISOString(),
+  };
+  posts.unshift(post);
+  putJson("blog", posts);
+  res.status(201).json(post);
+});
+
+router.put("/admin/blog/:id", requireAuth, (req: Request, res: Response) => {
+  const posts = getJson<BlogPost[]>("blog", []);
+  const idx = posts.findIndex((p) => p.id === req.params["id"]);
+  if (idx === -1) { res.status(404).json({ error: "Not found" }); return; }
+  const body = req.body as Partial<BlogPost>;
+  posts[idx] = {
+    ...posts[idx],
+    title: String(body.title ?? posts[idx].title).slice(0, 200),
+    description: String(body.description ?? posts[idx].description).slice(0, 500),
+    content: String(body.content ?? posts[idx].content).slice(0, 50000),
+    imageUrl: String(body.imageUrl ?? posts[idx].imageUrl).slice(0, 500),
+    date: String(body.date ?? posts[idx].date).slice(0, 20),
+  };
+  putJson("blog", posts);
+  res.json(posts[idx]);
+});
+
+router.delete("/admin/blog/:id", requireAuth, (req: Request, res: Response) => {
+  const posts = getJson<BlogPost[]>("blog", []);
+  const filtered = posts.filter((p) => p.id !== req.params["id"]);
+  if (filtered.length === posts.length) { res.status(404).json({ error: "Not found" }); return; }
+  putJson("blog", filtered);
+  res.json({ success: true });
+});
+
+router.get("/admin/cv", requireAuth, (_req: Request, res: Response) => {
+  res.json(getJson("cv", { url: "" }));
+});
+
+router.put("/admin/cv", requireAuth, (req: Request, res: Response) => {
+  const { url } = req.body ?? {};
+  const updated = { url: String(url ?? "").slice(0, 1000) };
+  putJson("cv", updated);
+  res.json(updated);
+});
+
+const VALID_CONTENT_SECTIONS = ["hero", "skills", "about-tabs"];
+
+router.get("/admin/content/:section", requireAuth, (req: Request, res: Response) => {
+  const section = String(req.params["section"]);
+  if (!VALID_CONTENT_SECTIONS.includes(section)) {
+    res.status(400).json({ error: "Invalid section" });
+    return;
+  }
+  res.json(getJson(`content:${section}`, {}));
+});
+
+router.put("/admin/content/:section", requireAuth, (req: Request, res: Response) => {
+  const section = String(req.params["section"]);
+  if (!VALID_CONTENT_SECTIONS.includes(section)) {
+    res.status(400).json({ error: "Invalid section" });
+    return;
+  }
+  const data = req.body;
+  if (!data || typeof data !== "object") {
+    res.status(400).json({ error: "Invalid data" });
+    return;
+  }
+  putJson(`content:${section}`, data);
+  res.json(data);
+});
+
+router.put("/admin/password", requireAuth, (req: Request, res: Response) => {
+  const { currentPassword, newPassword } = req.body ?? {};
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ error: "Current password and new password are required" });
+    return;
+  }
+  if (typeof newPassword !== "string" || newPassword.length < 6) {
+    res.status(400).json({ error: "New password must be at least 6 characters" });
+    return;
+  }
+  if (!checkAdminPassword(currentPassword)) {
+    res.status(401).json({ error: "Current password is incorrect" });
+    return;
+  }
+  changeAdminPassword(newPassword);
+  res.json({ success: true, token: createToken() });
 });
 
 export default router;

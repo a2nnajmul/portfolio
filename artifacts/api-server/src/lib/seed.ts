@@ -18,9 +18,48 @@ const DEFAULT_ABOUT = {
   bio: "I am a creative Graphic Designer and a curious student from Bangladesh. I love creating modern and clean designs, tackling challenges, and exploring new technologies. I specialize in logo design, UI/UX, and brand identity.",
 };
 
+const DEFAULT_HERO = {
+  name: "Najmul Alam",
+  greeting: "Hi, I'm",
+  title: "Student & Graphic Designer",
+  buttonPrimary: "Download CV",
+  buttonSecondary: "View Work",
+};
+
+const DEFAULT_SKILLS = {
+  core: [
+    { id: "1", name: "Graphic Design", icon: "Palette", description: "Logo design, branding, flyers, social media" },
+    { id: "2", name: "UI/UX Design", icon: "Layout", description: "Modern interfaces, wireframes, prototypes" },
+    { id: "3", name: "Adobe Illustrator", icon: "PenTool", description: "Vector graphics, illustrations, icons" },
+    { id: "4", name: "Adobe Photoshop", icon: "Image", description: "Photo editing, manipulation, compositing" },
+  ],
+  technical: [
+    "Windows OS", "Microsoft Word", "Microsoft Excel", "Microsoft PowerPoint",
+    "Google Workspace", "Canva", "Figma",
+  ],
+};
+
+const DEFAULT_ABOUT_TABS = {
+  education: [
+    { id: "1", title: "SSC (Science)", institution: "Local High School", year: "2020", description: "Completed secondary education with science major." },
+  ],
+  languages: [
+    { id: "1", name: "Bengali", level: "Native" },
+    { id: "2", name: "English", level: "Intermediate" },
+    { id: "3", name: "Hindi", level: "Basic" },
+  ],
+  extraCurricular: [
+    { id: "1", activity: "Freelance Graphic Design", description: "Creating designs for local and international clients." },
+  ],
+};
+
 export function seedIfEmpty() {
   if (!kv.get("projects")) kv.put("projects", JSON.stringify(DEFAULT_PROJECTS));
   if (!kv.get("experience")) kv.put("experience", JSON.stringify(DEFAULT_EXPERIENCE));
   if (!kv.get("about")) kv.put("about", JSON.stringify(DEFAULT_ABOUT));
   if (!kv.get("messages")) kv.put("messages", JSON.stringify([]));
+  if (!kv.get("blog")) kv.put("blog", JSON.stringify([]));
+  if (!kv.get("content:hero")) kv.put("content:hero", JSON.stringify(DEFAULT_HERO));
+  if (!kv.get("content:skills")) kv.put("content:skills", JSON.stringify(DEFAULT_SKILLS));
+  if (!kv.get("content:about-tabs")) kv.put("content:about-tabs", JSON.stringify(DEFAULT_ABOUT_TABS));
 }

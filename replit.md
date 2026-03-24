@@ -71,9 +71,41 @@ A single-page portfolio website for **Najmul Alam** — student & graphic design
 
 ## API Server (artifacts/api-server)
 
-Express 5 API, mounted at path `/api`. Routes:
+Express 5 API, mounted at path `/api`. Both Express server and Cloudflare Worker implement identical routes.
+
+### Public Routes
 - `GET /api/healthz` — health check
 - `POST /api/contact` — contact form submission
+- `GET /api/projects` — list portfolio projects
+- `GET /api/experience` — list experience entries
+- `GET /api/about` — get bio/about info
+- `GET /api/blog` — list blog posts
+- `GET /api/blog/:id` — single blog post detail
+- `GET /api/cv` — get current CV URL
+- `GET /api/content/:section` — get content for hero, skills, or about-tabs
+
+### Admin Routes (JWT auth required)
+- `POST /api/admin/login` — authenticate with password, returns token
+- `GET/POST /api/admin/projects` — list/create projects
+- `PUT/DELETE /api/admin/projects/:id` — update/delete project
+- `GET/PUT /api/admin/experience` — list/bulk-update experience
+- `GET/PUT /api/admin/about` — get/update bio
+- `GET /api/admin/messages` — list messages
+- `DELETE /api/admin/messages/:id` — delete message
+- `PUT /api/admin/messages/:id/read` — toggle read/unread status
+- `GET/POST /api/admin/blog` — list/create blog posts
+- `PUT/DELETE /api/admin/blog/:id` — update/delete blog post
+- `GET/PUT /api/admin/cv` — get/update CV URL
+- `GET/PUT /api/admin/content/:section` — get/update content sections (hero, skills, about-tabs)
+- `PUT /api/admin/password` — change admin password (requires currentPassword + newPassword)
+
+### Storage (KV Keys)
+- `projects`, `experience`, `about`, `messages`, `blog` — JSON arrays/objects
+- `cv` — `{ url: string }`
+- `content:hero` — `{ name, greeting, title, buttonPrimary, buttonSecondary }`
+- `content:skills` — `{ core: [...], technical: [...] }`
+- `content:about-tabs` — `{ education: [...], languages: [...], extraCurricular: [...] }`
+- `admin_password_hash` — SHA-256 hex hash (set after password change)
 
 ### Contact Route Validation
 - `name`: string, min 2 chars, max 100 chars
