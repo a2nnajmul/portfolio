@@ -1,0 +1,89 @@
+You are a senior frontend engineer specializing in pixel-perfect responsive design.
+
+Fix ONLY the hero section of my React + Tailwind project. The mobile layout is currently broken and the banner image is improperly scaled and positioned.
+
+========================
+🚨 CURRENT ISSUE (MOBILE)
+========================
+- Banner image is zoomed and cropped badly
+- Face is not properly centered
+- Layout feels vertically unbalanced
+- Image takes too much space and pushes content awkwardly
+
+========================
+🎯 GOAL
+========================
+Make the hero section PERFECT on mobile while keeping desktop design unchanged.
+
+========================
+📱 MOBILE FIX (STRICT RULES)
+========================
+- Layout MUST be:
+  Text content (top)
+  Image (bottom)
+
+- Image container:
+  - Use fixed aspect ratio: aspect-[4/5]
+  - max-height: 60vh
+  - overflow: hidden
+  - rounded corners (optional)
+
+- Image:
+  - width: 100%
+  - height: 100%
+  - object-fit: cover
+  - object-position: 70% center   ← VERY IMPORTANT (face alignment fix)
+
+- Add soft top gradient overlay:
+  background: linear-gradient(to bottom, rgba(255,255,255,0.95), transparent)
+
+- Add spacing:
+  - margin-top between text and image
+  - padding-bottom for breathing room
+
+========================
+💻 DESKTOP (DO NOT BREAK)
+========================
+- Keep existing two-column layout
+- Image on right side
+- Full height (90–100vh)
+- object-position: right center
+
+========================
+⚡ PERFORMANCE RULES
+========================
+- Do NOT use fixed pixel heights (except max-height)
+- Avoid layout shift (CLS must be stable)
+- No unnecessary wrappers
+- Keep DOM clean
+
+========================
+🧠 IMPLEMENTATION DETAILS
+========================
+- Use Tailwind responsive classes:
+  md: lg:
+- Example behavior:
+  mobile → flex-col
+  desktop → flex-row
+
+- Ensure:
+  - No horizontal scroll
+  - No image overflow
+  - No text overlap
+
+========================
+📦 OUTPUT
+========================
+- Return ONLY updated Hero component code
+- Clean and production-ready
+- No explanation
+
+========================
+⚠️ CRITICAL
+========================
+- Face must always be visible on mobile
+- No zoomed-in awkward crop
+- Layout must feel balanced and premium
+- Mobile experience is TOP priority
+
+Now fix the hero section.
