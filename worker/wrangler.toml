@@ -15,10 +15,5 @@ binding = "PORTFOLIO_KV"
 id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
 
 [[routes]]
-pattern = "your-domain.pages.dev/api/*"
-zone_name = "your-domain.com"
-
-# After deploying to your custom domain, update:
-# [[routes]]
-# pattern = "najmulalam.com/api/*"
-# zone_name = "najmulalam.com"
+pattern = "najmulalam.site/api/*"
+zone_name = "najmulalam.site"
