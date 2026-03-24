@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, Clock, Tag, ArrowRight } from "lucide-react";
 import { apiFetch } from "@/lib/api";
 import Navbar from "@/components/sections/Navbar";
 import Footer from "@/components/sections/Footer";
+import CommentSection from "@/components/CommentSection";
 
 interface BlogPostData {
   id: string;
@@ -212,6 +213,8 @@ export default function BlogPost() {
               {showAds && slotsForPosition("before-recommended").map((s) => (
                 <AdSlot key={s.id} adUnitCode={s.adUnitCode} />
               ))}
+
+              <CommentSection postId={params.id!} />
 
               {recommended.length > 0 && (
                 <div className="mt-16 pt-12 border-t border-border">

@@ -1,5 +1,13 @@
 import { Router, type IRouter, type Request, type Response } from "express";
-import { getJson } from "../lib/kv.js";
+import { getJson, putJson } from "../lib/kv.js";
+import { randomUUID } from "node:crypto";
+
+interface Comment {
+  id: string;
+  name: string;
+  text: string;
+  createdAt: string;
+}
 
 const router: IRouter = Router();
 
@@ -43,6 +51,41 @@ router.get("/content/:section", (req: Request, res: Response) => {
     return;
   }
   res.json(getJson(`content:${section}`, {}));
+});
+
+router.get("/blog/:id/comments", (req: Request, res: Response) => {
+  const postId = String(req.params["id"]);
+  res.json(getJson<Comment[]>(`comments:${postId}`, []));
+});
+
+router.post("/blog/:id/comments", (req: Request, res: Response) => {
+  const postId = String(req.params["id"]);
+  const posts = getJson<Array<{ id: string }>>("blog", []);
+  if (!posts.find((p) => p.id === postId)) {
+    res.status(404).json({ error: "Post not found" });
+    return;
+  }
+  const { name, text } = req.body ?? {};
+  const trimmedName = String(name ?? "").trim();
+  const trimmedText = String(text ?? "").trim();
+  if (!trimmedName || trimmedName.length < 1) {
+    res.status(400).json({ error: "Name is required" });
+    return;
+  }
+  if (!trimmedText || trimmedText.length < 1) {
+    res.status(400).json({ error: "Comment text is required" });
+    return;
+  }
+  const comment: Comment = {
+    id: randomUUID(),
+    name: trimmedName.slice(0, 100),
+    text: trimmedText.slice(0, 2000),
+    createdAt: new Date().toISOString(),
+  };
+  const comments = getJson<Comment[]>(`comments:${postId}`, []);
+  comments.push(comment);
+  putJson(`comments:${postId}`, comments);
+  res.status(201).json(comment);
 });
 
 export default router;

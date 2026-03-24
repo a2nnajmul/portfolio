@@ -4,7 +4,7 @@ import {
   LogOut, FolderOpen, Briefcase, User, Mail,
   Plus, Pencil, Trash2, Save, X, ChevronUp, ChevronDown,
   LayoutDashboard, FileText, FileDown, Palette, Settings, Menu,
-  Eye, EyeOff, ExternalLink, Lock, Star, Tag, Megaphone,
+  Eye, EyeOff, ExternalLink, Lock, Star, Tag, Megaphone, MessageCircle,
 } from "lucide-react";
 
 type Tab = "dashboard" | "blog" | "cv" | "content" | "projects" | "experience" | "about" | "messages" | "settings";
@@ -190,6 +190,13 @@ function DashboardTab() {
   );
 }
 
+interface BlogComment {
+  id: string;
+  name: string;
+  text: string;
+  createdAt: string;
+}
+
 function BlogTab() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -198,6 +205,9 @@ function BlogTab() {
   const [form, setForm] = useState({ title: "", description: "", content: "", imageUrl: "", date: "", tags: "" as string, featured: false });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [viewingComments, setViewingComments] = useState<string | null>(null);
+  const [comments, setComments] = useState<BlogComment[]>([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
 
   useEffect(() => {
     adminFetch<BlogPost[]>("/admin/blog").then(setPosts).catch(() => setError("Failed to load")).finally(() => setLoading(false));
@@ -249,6 +259,24 @@ function BlogTab() {
     if (!confirm("Delete this blog post?")) return;
     await adminFetch(`/admin/blog/${id}`, { method: "DELETE" });
     setPosts((prev) => prev.filter((p) => p.id !== id));
+  }
+
+  async function viewComments(postId: string) {
+    if (viewingComments === postId) { setViewingComments(null); return; }
+    setViewingComments(postId);
+    setComments([]);
+    setCommentsLoading(true);
+    try {
+      const data = await adminFetch<BlogComment[]>(`/admin/blog/${postId}/comments`);
+      setComments(data);
+    } catch { setComments([]); }
+    finally { setCommentsLoading(false); }
+  }
+
+  async function deleteComment(postId: string, commentId: string) {
+    if (!confirm("Delete this comment?")) return;
+    await adminFetch(`/admin/blog/${postId}/comments/${commentId}`, { method: "DELETE" });
+    setComments((prev) => prev.filter((c) => c.id !== commentId));
   }
 
   return (
@@ -342,6 +370,9 @@ function BlogTab() {
                   </div>
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
+                  <button onClick={() => viewComments(p.id)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition ${viewingComments === p.id ? "border-primary bg-primary/10 text-primary" : "border-border hover:bg-muted"}`}>
+                    <MessageCircle className="w-3 h-3" />Comments
+                  </button>
                   <button onClick={() => startEdit(p)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition">
                     <Pencil className="w-3 h-3" />Edit
                   </button>
@@ -358,6 +389,39 @@ function BlogTab() {
                       <Tag className="w-2.5 h-2.5" />{tag}
                     </span>
                   ))}
+                </div>
+              )}
+              {viewingComments === p.id && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                    <MessageCircle className="w-4 h-4 text-primary" /> Comments
+                  </h4>
+                  {commentsLoading ? (
+                    <p className="text-muted-foreground text-sm">Loading…</p>
+                  ) : comments.length === 0 ? (
+                    <p className="text-muted-foreground text-sm">No comments on this post.</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {comments.map((c) => (
+                        <div key={c.id} className="bg-muted/30 rounded-xl p-3 flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium text-foreground text-sm">{c.name}</span>
+                              <span className="text-xs text-muted-foreground">{new Date(c.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <p className="text-foreground/80 text-sm whitespace-pre-line">{c.text}</p>
+                          </div>
+                          <button
+                            onClick={() => deleteComment(p.id, c.id)}
+                            className="flex-shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10 transition"
+                            title="Delete comment"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
             </div>

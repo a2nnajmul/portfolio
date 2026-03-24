@@ -236,6 +236,31 @@ router.delete("/admin/blog/:id", requireAuth, (req: Request, res: Response) => {
   res.json({ success: true });
 });
 
+interface Comment {
+  id: string;
+  name: string;
+  text: string;
+  createdAt: string;
+}
+
+router.get("/admin/blog/:id/comments", requireAuth, (req: Request, res: Response) => {
+  const postId = String(req.params["id"]);
+  res.json(getJson<Comment[]>(`comments:${postId}`, []));
+});
+
+router.delete("/admin/blog/:postId/comments/:commentId", requireAuth, (req: Request, res: Response) => {
+  const postId = String(req.params["postId"]);
+  const commentId = String(req.params["commentId"]);
+  const comments = getJson<Comment[]>(`comments:${postId}`, []);
+  const filtered = comments.filter((c) => c.id !== commentId);
+  if (filtered.length === comments.length) {
+    res.status(404).json({ error: "Comment not found" });
+    return;
+  }
+  putJson(`comments:${postId}`, filtered);
+  res.json({ success: true });
+});
+
 router.get("/admin/cv", requireAuth, (_req: Request, res: Response) => {
   res.json(getJson("cv", { url: "" }));
 });

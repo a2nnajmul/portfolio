@@ -241,6 +241,27 @@ export default {
       return json(kv ? await getJson(kv, "blog", []) : [], 200, origin);
     }
 
+    const blogCommentsMatch = path.match(/^\/api\/blog\/([^/]+)\/comments$/);
+    if (blogCommentsMatch && request.method === "GET") {
+      const postId = blogCommentsMatch[1];
+      return json(kv ? await getJson(kv, `comments:${postId}`, []) : [], 200, origin);
+    }
+    if (blogCommentsMatch && request.method === "POST") {
+      const postId = blogCommentsMatch[1];
+      if (!kv) return json({ error: "KV not configured" }, 503, origin);
+      const posts = await getJson(kv, "blog", []);
+      if (!posts.find((p) => p.id === postId)) return json({ error: "Post not found" }, 404, origin);
+      const cName = String(body?.name ?? "").trim();
+      const cText = String(body?.text ?? "").trim();
+      if (!cName) return json({ error: "Name is required" }, 400, origin);
+      if (!cText) return json({ error: "Comment text is required" }, 400, origin);
+      const comment = { id: randomId(), name: cName.slice(0, 100), text: cText.slice(0, 2000), createdAt: new Date().toISOString() };
+      const comments = await getJson(kv, `comments:${postId}`, []);
+      comments.push(comment);
+      await kv.put(`comments:${postId}`, JSON.stringify(comments));
+      return json(comment, 201, origin);
+    }
+
     const blogDetailMatch = path.match(/^\/api\/blog\/([^/]+)$/);
     if (blogDetailMatch && request.method === "GET") {
       const posts = kv ? await getJson(kv, "blog", []) : [];
@@ -414,6 +435,24 @@ export default {
           await kv.put("blog", JSON.stringify(posts));
           return json({ success: true }, 200, origin);
         }
+      }
+
+      // Blog comments (admin)
+      const adminBlogCommentsMatch = path.match(/^\/api\/admin\/blog\/([^/]+)\/comments$/);
+      if (adminBlogCommentsMatch && request.method === "GET") {
+        const postId = adminBlogCommentsMatch[1];
+        return json(await getJson(kv, `comments:${postId}`, []), 200, origin);
+      }
+
+      const adminCommentDeleteMatch = path.match(/^\/api\/admin\/blog\/([^/]+)\/comments\/([^/]+)$/);
+      if (adminCommentDeleteMatch && request.method === "DELETE") {
+        const postId = adminCommentDeleteMatch[1];
+        const commentId = adminCommentDeleteMatch[2];
+        const comments = await getJson(kv, `comments:${postId}`, []);
+        const filtered = comments.filter((c) => c.id !== commentId);
+        if (filtered.length === comments.length) return json({ error: "Comment not found" }, 404, origin);
+        await kv.put(`comments:${postId}`, JSON.stringify(filtered));
+        return json({ success: true }, 200, origin);
       }
 
       // CV
