@@ -9,6 +9,7 @@ interface HeroContent {
   title: string;
   buttonPrimary: string;
   buttonSecondary: string;
+  backgroundImage?: string;
 }
 
 interface CVData {
@@ -21,6 +22,7 @@ const FALLBACK_HERO: HeroContent = {
   title: "Student & Graphic Designer",
   buttonPrimary: "Download CV",
   buttonSecondary: "View Work",
+  backgroundImage: "",
 };
 
 const socialLinks = [
@@ -43,7 +45,18 @@ const itemVariants: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
-function BannerPicture({ className }: { className?: string }) {
+function BannerPicture({ className, src }: { className?: string; src?: string }) {
+  if (src) {
+    return (
+      <img
+        src={src}
+        alt="Najmul Alam"
+        className={className}
+        fetchPriority="high"
+        decoding="async"
+      />
+    );
+  }
   return (
     <picture className="block w-full h-full">
       <source
@@ -154,6 +167,14 @@ function TextContent() {
 }
 
 export default function Hero() {
+  const { data: hero } = useQuery<HeroContent>({
+    queryKey: ["content-hero"],
+    queryFn: () => apiFetch<HeroContent>("/content/hero"),
+    placeholderData: FALLBACK_HERO,
+  });
+
+  const bgImage = hero?.backgroundImage || "";
+
   return (
     <section
       id="home"
@@ -164,7 +185,7 @@ export default function Hero() {
       </div>
 
       <div className="relative w-full mt-4 md:mt-0 aspect-[3/2] max-h-[45vh] sm:aspect-[5/3] sm:max-h-[50vh] overflow-hidden md:absolute md:inset-0 md:aspect-auto md:max-h-none md:w-full md:h-full">
-        <BannerPicture className="w-full h-full object-cover object-[70%_center] md:object-[right_center]" />
+        <BannerPicture className="w-full h-full object-cover object-[70%_center] md:object-[right_center]" src={bgImage || undefined} />
 
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#f5f0eb]/95 to-transparent dark:from-gray-900/95 md:hidden pointer-events-none" />
 

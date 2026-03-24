@@ -117,6 +117,7 @@ const DEFAULT_HERO = {
   title: "Student & Graphic Designer",
   buttonPrimary: "Download CV",
   buttonSecondary: "View Work",
+  backgroundImage: "",
 };
 const DEFAULT_SKILLS = {
   core: [

@@ -526,11 +526,11 @@ function ContentTab() {
 }
 
 interface HeroContent {
-  name: string; greeting: string; title: string; buttonPrimary: string; buttonSecondary: string;
+  name: string; greeting: string; title: string; buttonPrimary: string; buttonSecondary: string; backgroundImage?: string;
 }
 
 function HeroEditor() {
-  const [data, setData] = useState<HeroContent>({ name: "", greeting: "", title: "", buttonPrimary: "", buttonSecondary: "" });
+  const [data, setData] = useState<HeroContent>({ name: "", greeting: "", title: "", buttonPrimary: "", buttonSecondary: "", backgroundImage: "" });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -564,6 +564,7 @@ function HeroEditor() {
           <Field label="Primary Button" value={data.buttonPrimary} onChange={(v) => setData((d) => ({ ...d, buttonPrimary: v }))} />
           <Field label="Secondary Button" value={data.buttonSecondary} onChange={(v) => setData((d) => ({ ...d, buttonSecondary: v }))} />
         </div>
+        <Field label="Background Image URL" value={data.backgroundImage ?? ""} onChange={(v) => setData((d) => ({ ...d, backgroundImage: v }))} placeholder="https://… (leave empty for default banner)" />
         <div className="flex items-center gap-4 pt-2">
           <button type="submit" disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 disabled:opacity-60 transition">
             <Save className="w-4 h-4" />{saving ? "Saving…" : "Save"}
