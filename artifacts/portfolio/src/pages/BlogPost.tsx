@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useId } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams, Link } from "wouter";
 import { ArrowLeft, Calendar, Clock, Tag, ArrowRight } from "lucide-react";
@@ -20,12 +20,36 @@ interface BlogPostData {
 
 interface AdsSettings {
   enabled: boolean;
+  headScript: string;
   adUnitCode: string;
 }
 
-function AdSlot({ adUnitCode }: { adUnitCode: string }) {
+function useAdHeadScript(headScript: string | undefined, enabled: boolean | undefined) {
+  const injectedRef = useRef(false);
   useEffect(() => {
-    const container = document.getElementById("ad-slot-reinit");
+    if (injectedRef.current || !enabled || !headScript) return;
+    const existing = document.querySelector('script[data-ad-head="true"]');
+    if (existing) { injectedRef.current = true; return; }
+    const temp = document.createElement("div");
+    temp.innerHTML = headScript;
+    const scripts = temp.querySelectorAll("script");
+    scripts.forEach((src) => {
+      const s = document.createElement("script");
+      Array.from(src.attributes).forEach((attr) => s.setAttribute(attr.name, attr.value));
+      s.textContent = src.textContent;
+      s.setAttribute("data-ad-head", "true");
+      document.head.appendChild(s);
+    });
+    injectedRef.current = true;
+  }, [headScript, enabled]);
+}
+
+function AdSlot({ adUnitCode }: { adUnitCode: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const slotId = useId();
+
+  useEffect(() => {
+    const container = containerRef.current;
     if (!container) return;
     const scripts = container.querySelectorAll("script");
     scripts.forEach((oldScript) => {
@@ -34,12 +58,12 @@ function AdSlot({ adUnitCode }: { adUnitCode: string }) {
       newScript.textContent = oldScript.textContent;
       oldScript.parentNode?.replaceChild(newScript, oldScript);
     });
-  }, [adUnitCode]);
+  }, [adUnitCode, slotId]);
 
   return (
     <div className="my-8 flex justify-center">
       <div
-        id="ad-slot-reinit"
+        ref={containerRef}
         className="w-full max-w-[728px] min-h-[90px] bg-muted/30 rounded-xl overflow-hidden flex items-center justify-center"
         dangerouslySetInnerHTML={{ __html: adUnitCode }}
       />
@@ -65,6 +89,8 @@ export default function BlogPost() {
     queryKey: ["ads-settings"],
     queryFn: () => apiFetch<AdsSettings>("/settings/ads"),
   });
+
+  useAdHeadScript(adsSettings?.headScript, adsSettings?.enabled);
 
   const showAds = adsSettings?.enabled && adsSettings?.adUnitCode;
 

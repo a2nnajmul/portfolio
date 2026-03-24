@@ -31,8 +31,8 @@ router.get("/cv", (_req: Request, res: Response) => {
 });
 
 router.get("/settings/ads", (_req: Request, res: Response) => {
-  const ads = getJson<{ enabled: boolean; adUnitCode: string }>("settings:ads", { enabled: false, adUnitCode: "" });
-  res.json({ enabled: ads.enabled, adUnitCode: ads.adUnitCode });
+  const ads = getJson<{ enabled: boolean; headScript: string; adUnitCode: string }>("settings:ads", { enabled: false, headScript: "", adUnitCode: "" });
+  res.json({ enabled: ads.enabled, headScript: ads.headScript, adUnitCode: ads.adUnitCode });
 });
 
 router.get("/content/:section", (req: Request, res: Response) => {
