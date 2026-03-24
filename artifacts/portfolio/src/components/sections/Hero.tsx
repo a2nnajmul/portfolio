@@ -118,16 +118,16 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative overflow-hidden bg-[#f5f0eb] dark:bg-gray-900 md:h-[100svh] md:min-h-[600px] md:max-h-[1000px] md:flex md:items-center"
+      className="relative overflow-hidden bg-[#f5f0eb] dark:bg-gray-900 pb-0 md:pb-0 md:h-[100svh] md:min-h-[600px] md:max-h-[1000px] md:flex md:items-center"
     >
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-6 md:py-0">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-2 md:py-0">
         <TextContent />
       </div>
 
-      <div className="relative w-full aspect-[3/4] sm:aspect-[4/3] md:absolute md:inset-0 md:aspect-auto md:w-full md:h-full overflow-hidden">
-        <BannerPicture className="w-full h-full object-cover object-[right_center]" />
+      <div className="relative w-full mt-4 md:mt-0 aspect-[4/5] max-h-[60vh] sm:aspect-[4/3] sm:max-h-none md:absolute md:inset-0 md:aspect-auto md:w-full md:h-full overflow-hidden">
+        <BannerPicture className="w-full h-full object-cover object-[70%_center] md:object-[right_center]" />
 
-        <div className="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-[#f5f0eb] to-transparent dark:from-gray-900 md:hidden pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#f5f0eb]/95 to-transparent dark:from-gray-900/95 md:hidden pointer-events-none" />
 
         <div className="hidden md:block absolute inset-0 bg-gradient-to-r from-[#f5f0eb] via-[#f5f0eb]/55 to-transparent dark:from-gray-900 dark:via-gray-900/55 dark:to-transparent pointer-events-none" />
       </div>
