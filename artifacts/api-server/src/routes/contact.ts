@@ -18,6 +18,7 @@ interface Message {
   email: string;
   message: string;
   createdAt: string;
+  read: boolean;
 }
 
 function isValidEmail(email: string): boolean {
@@ -32,6 +33,7 @@ function saveMessage(data: { name: string; email: string; message: string }) {
     email: data.email,
     message: data.message,
     createdAt: new Date().toISOString(),
+    read: false,
   });
   putJson("messages", messages);
 }
