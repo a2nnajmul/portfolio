@@ -1,0 +1,89 @@
+You are a senior frontend engineer and responsive UI expert.
+
+Fix the hero section banner image so it displays perfectly across all devices (mobile, tablet, desktop) without distortion, bad cropping, or layout breaking.
+
+I will provide the banner image. You MUST preserve its original aspect ratio and visual composition.
+
+========================
+🖼️ IMAGE HANDLING (CRITICAL)
+========================
+- DO NOT stretch or distort the image
+- Maintain original aspect ratio at all times
+- Use:
+  object-fit: cover
+  object-position: right center
+
+- Ensure the face/person in the image is ALWAYS visible (no head cut)
+
+========================
+📐 RESPONSIVE LAYOUT
+========================
+Hero section must adapt like this:
+
+Desktop (≥1024px):
+- Two-column layout
+  Left: text content
+  Right: banner image
+- Image fully visible and aligned properly
+- Height: 90vh–100vh
+
+Tablet (768px–1023px):
+- Slightly stacked layout
+- Image scales proportionally
+- Maintain spacing balance
+
+Mobile (<768px):
+- Stack layout (text on top, image below OR background style)
+- Use:
+  aspect-ratio: 4/5 or 3/4
+- Ensure:
+  - Face remains visible
+  - No overflow
+  - No zoomed-in awkward crop
+
+========================
+🎨 ADVANCED FIX
+========================
+- Add gradient overlay:
+  left side → light/white fade
+  right side → clear image
+
+- Example:
+  background: linear-gradient(to right, rgba(255,255,255,0.95), rgba(255,255,255,0.6), transparent)
+
+- This improves text readability without hiding image
+
+========================
+⚡ PERFORMANCE
+========================
+- Use responsive images:
+  srcset + sizes
+- Use WebP/AVIF if possible
+- Lazy load below-the-fold images (NOT hero)
+
+========================
+💡 LAYOUT BEST PRACTICE
+========================
+- Wrap image in a container:
+  position: relative;
+  overflow: hidden;
+  border-radius (optional modern look)
+
+- Avoid fixed height images on mobile
+- Use flexible containers instead of hard-coded px
+
+========================
+📦 OUTPUT
+========================
+- Provide updated React + Tailwind hero section code
+- Clean, reusable component
+- Fully responsive and tested layout
+
+========================
+⚠️ IMPORTANT
+========================
+- Image must look natural on ALL screen sizes
+- No face cut, no weird zoom, no stretching
+- Maintain premium, clean layout
+
+Now fix and generate the updated hero section.
