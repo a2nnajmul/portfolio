@@ -31,13 +31,13 @@ router.get("/cv", (_req: Request, res: Response) => {
 });
 
 router.get("/settings/ads", (_req: Request, res: Response) => {
-  const ads = getJson<{ enabled: boolean; headScript: string; adUnitCode: string }>("settings:ads", { enabled: false, headScript: "", adUnitCode: "" });
-  res.json({ enabled: ads.enabled, headScript: ads.headScript, adUnitCode: ads.adUnitCode });
+  const ads = getJson<{ enabled: boolean; headScript: string; adSlots: { id: string; label: string; position: string; adUnitCode: string }[] }>("settings:ads", { enabled: false, headScript: "", adSlots: [] });
+  res.json({ enabled: ads.enabled, headScript: ads.headScript, adSlots: ads.adSlots });
 });
 
 router.get("/content/:section", (req: Request, res: Response) => {
   const section = String(req.params["section"]);
-  const validSections = ["hero", "skills", "about-tabs"];
+  const validSections = ["hero", "skills", "about-tabs", "contact"];
   if (!validSections.includes(section)) {
     res.status(400).json({ error: "Invalid section" });
     return;

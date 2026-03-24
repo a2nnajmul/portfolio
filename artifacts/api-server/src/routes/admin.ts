@@ -50,10 +50,17 @@ interface BlogPost {
   readTime?: string;
 }
 
+interface AdSlot {
+  id: string;
+  label: string;
+  position: string;
+  adUnitCode: string;
+}
+
 interface AdsSettings {
   enabled: boolean;
   headScript: string;
-  adUnitCode: string;
+  adSlots: AdSlot[];
 }
 
 function calcReadTime(content: string): string {
@@ -240,7 +247,7 @@ router.put("/admin/cv", requireAuth, (req: Request, res: Response) => {
   res.json(updated);
 });
 
-const VALID_CONTENT_SECTIONS = ["hero", "skills", "about-tabs"];
+const VALID_CONTENT_SECTIONS = ["hero", "skills", "about-tabs", "contact"];
 
 router.get("/admin/content/:section", requireAuth, (req: Request, res: Response) => {
   const section = String(req.params["section"]);
@@ -267,15 +274,23 @@ router.put("/admin/content/:section", requireAuth, (req: Request, res: Response)
 });
 
 router.get("/admin/settings/ads", requireAuth, (_req: Request, res: Response) => {
-  res.json(getJson<AdsSettings>("settings:ads", { enabled: false, headScript: "", adUnitCode: "" }));
+  res.json(getJson<AdsSettings>("settings:ads", { enabled: false, headScript: "", adSlots: [] }));
 });
 
 router.put("/admin/settings/ads", requireAuth, (req: Request, res: Response) => {
   const body = req.body as Partial<AdsSettings>;
+  const adSlots: AdSlot[] = Array.isArray(body.adSlots)
+    ? body.adSlots.map((s: Partial<AdSlot>) => ({
+        id: String(s.id ?? randomUUID()),
+        label: String(s.label ?? "").slice(0, 100),
+        position: String(s.position ?? "after-header").slice(0, 50),
+        adUnitCode: String(s.adUnitCode ?? "").slice(0, 5000),
+      })).slice(0, 10)
+    : [];
   const updated: AdsSettings = {
     enabled: Boolean(body.enabled),
     headScript: String(body.headScript ?? "").slice(0, 5000),
-    adUnitCode: String(body.adUnitCode ?? "").slice(0, 5000),
+    adSlots,
   };
   putJson("settings:ads", updated);
   res.json(updated);

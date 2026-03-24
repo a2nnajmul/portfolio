@@ -148,11 +148,18 @@ const DEFAULT_BLOG = [
   { id: "demo-6", title: "From Concept to Client: My Design Workflow", description: "A behind-the-scenes look at my design process from brief to delivery.", content: "## My Design Process\n\n### Discovery\nUnderstand the client's needs.\n\n### Research\nAnalyze competitors and create mood boards.\n\n### Sketching\nStart with pen and paper.\n\n### Digital Execution\nBring concepts to life in Illustrator and Photoshop.\n\n### Delivery\nProvide files in multiple formats with brand guidelines.", imageUrl: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80", date: "2026-02-20", tags: ["Workflow", "Freelance"], featured: true, createdAt: "2026-02-20T08:00:00Z" },
 ].map(p => ({ ...p, readTime: calcReadTime(p.content) }));
 
-const DEFAULT_ADS = { enabled: false, headScript: "", adUnitCode: "" };
+const DEFAULT_ADS = { enabled: false, headScript: "", adSlots: [] };
+const DEFAULT_CONTACT = {
+  heading: "Get In Touch",
+  email: "a2nnajmul@gmail.com",
+  phone: "(+880) 1793908183",
+  location: "Panchua, Kapasia, 1743\nDhaka, Bangladesh",
+  formHeading: "Send Me a Message",
+};
 
 async function seedKVIfEmpty(kv) {
   if (!kv) return;
-  const keys = ["projects", "experience", "about", "messages", "blog", "content:hero", "content:skills", "content:about-tabs", "settings:ads"];
+  const keys = ["projects", "experience", "about", "messages", "blog", "content:hero", "content:skills", "content:about-tabs", "content:contact", "settings:ads"];
   const values = await Promise.all(keys.map(k => kv.get(k)));
   const writes = [];
   if (!values[0]) writes.push(kv.put("projects", JSON.stringify(DEFAULT_PROJECTS)));
@@ -163,11 +170,12 @@ async function seedKVIfEmpty(kv) {
   if (!values[5]) writes.push(kv.put("content:hero", JSON.stringify(DEFAULT_HERO)));
   if (!values[6]) writes.push(kv.put("content:skills", JSON.stringify(DEFAULT_SKILLS)));
   if (!values[7]) writes.push(kv.put("content:about-tabs", JSON.stringify(DEFAULT_ABOUT_TABS)));
-  if (!values[8]) writes.push(kv.put("settings:ads", JSON.stringify(DEFAULT_ADS)));
+  if (!values[8]) writes.push(kv.put("content:contact", JSON.stringify(DEFAULT_CONTACT)));
+  if (!values[9]) writes.push(kv.put("settings:ads", JSON.stringify(DEFAULT_ADS)));
   await Promise.all(writes);
 }
 
-const VALID_CONTENT_SECTIONS = ["hero", "skills", "about-tabs"];
+const VALID_CONTENT_SECTIONS = ["hero", "skills", "about-tabs", "contact"];
 
 export default {
   async fetch(request, env) {
@@ -246,8 +254,8 @@ export default {
     }
 
     if (path === "/api/settings/ads" && request.method === "GET") {
-      const ads = kv ? await getJson(kv, "settings:ads", { enabled: false, headScript: "", adUnitCode: "" }) : { enabled: false, headScript: "", adUnitCode: "" };
-      return json({ enabled: ads.enabled, headScript: ads.headScript, adUnitCode: ads.adUnitCode }, 200, origin);
+      const ads = kv ? await getJson(kv, "settings:ads", { enabled: false, headScript: "", adSlots: [] }) : { enabled: false, headScript: "", adSlots: [] };
+      return json({ enabled: ads.enabled, headScript: ads.headScript, adSlots: ads.adSlots || [] }, 200, origin);
     }
 
     const contentPublicMatch = path.match(/^\/api\/content\/([^/]+)$/);
@@ -433,12 +441,20 @@ export default {
 
       // Ad settings
       if (path === "/api/admin/settings/ads") {
-        if (request.method === "GET") return json(await getJson(kv, "settings:ads", { enabled: false, headScript: "", adUnitCode: "" }), 200, origin);
+        if (request.method === "GET") return json(await getJson(kv, "settings:ads", { enabled: false, headScript: "", adSlots: [] }), 200, origin);
         if (request.method === "PUT") {
+          const adSlots = Array.isArray(body?.adSlots)
+            ? body.adSlots.map(s => ({
+                id: String(s.id ?? crypto.randomUUID()),
+                label: String(s.label ?? "").slice(0, 100),
+                position: String(s.position ?? "after-header").slice(0, 50),
+                adUnitCode: String(s.adUnitCode ?? "").slice(0, 5000),
+              })).slice(0, 10)
+            : [];
           const updated = {
             enabled: Boolean(body?.enabled),
             headScript: String(body?.headScript ?? "").slice(0, 5000),
-            adUnitCode: String(body?.adUnitCode ?? "").slice(0, 5000),
+            adSlots,
           };
           await kv.put("settings:ads", JSON.stringify(updated));
           return json(updated, 200, origin);

@@ -134,7 +134,15 @@ const DEFAULT_BLOG = [
   },
 ].map(post => ({ ...post, readTime: calcReadTime(post.content) }));
 
-const DEFAULT_ADS = { enabled: false, headScript: "", adUnitCode: "" };
+const DEFAULT_ADS = { enabled: false, headScript: "", adSlots: [] };
+
+const DEFAULT_CONTACT = {
+  heading: "Get In Touch",
+  email: "a2nnajmul@gmail.com",
+  phone: "(+880) 1793908183",
+  location: "Panchua, Kapasia, 1743\nDhaka, Bangladesh",
+  formHeading: "Send Me a Message",
+};
 
 export function seedIfEmpty() {
   if (!kv.get("projects")) kv.put("projects", JSON.stringify(DEFAULT_PROJECTS));
@@ -145,5 +153,6 @@ export function seedIfEmpty() {
   if (!kv.get("content:hero")) kv.put("content:hero", JSON.stringify(DEFAULT_HERO));
   if (!kv.get("content:skills")) kv.put("content:skills", JSON.stringify(DEFAULT_SKILLS));
   if (!kv.get("content:about-tabs")) kv.put("content:about-tabs", JSON.stringify(DEFAULT_ABOUT_TABS));
+  if (!kv.get("content:contact")) kv.put("content:contact", JSON.stringify(DEFAULT_CONTACT));
   if (!kv.get("settings:ads")) kv.put("settings:ads", JSON.stringify(DEFAULT_ADS));
 }

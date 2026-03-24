@@ -18,10 +18,17 @@ interface BlogPostData {
   readTime?: string;
 }
 
+interface AdSlot {
+  id: string;
+  label: string;
+  position: string;
+  adUnitCode: string;
+}
+
 interface AdsSettings {
   enabled: boolean;
   headScript: string;
-  adUnitCode: string;
+  adSlots: AdSlot[];
 }
 
 function useAdHeadScript(headScript: string | undefined, enabled: boolean | undefined) {
@@ -92,7 +99,9 @@ export default function BlogPost() {
 
   useAdHeadScript(adsSettings?.headScript, adsSettings?.enabled);
 
-  const showAds = adsSettings?.enabled && adsSettings?.adUnitCode;
+  const showAds = adsSettings?.enabled && adsSettings?.adSlots && adsSettings.adSlots.length > 0;
+  const slotsForPosition = (pos: string) =>
+    (adsSettings?.adSlots || []).filter((s) => s.position === pos && s.adUnitCode);
 
   const recommended = allPosts
     .filter((p) => p.id !== params.id)
@@ -179,7 +188,9 @@ export default function BlogPost() {
 
                 <div className="w-full h-px bg-border mb-8" />
 
-                {showAds && <AdSlot adUnitCode={adsSettings.adUnitCode} />}
+                {showAds && slotsForPosition("after-header").map((s) => (
+                  <AdSlot key={s.id} adUnitCode={s.adUnitCode} />
+                ))}
 
                 <div className="prose prose-lg dark:prose-invert max-w-none prose-headings:font-display prose-a:text-primary prose-img:rounded-2xl">
                   {post.content.split("\n").map((paragraph, i) => {
@@ -192,9 +203,15 @@ export default function BlogPost() {
                     return <p key={i} className="text-foreground/80 leading-relaxed mb-4">{trimmed}</p>;
                   })}
                 </div>
+
+                {showAds && slotsForPosition("mid-content").map((s) => (
+                  <AdSlot key={s.id} adUnitCode={s.adUnitCode} />
+                ))}
               </article>
 
-              {showAds && <AdSlot adUnitCode={adsSettings.adUnitCode} />}
+              {showAds && slotsForPosition("before-recommended").map((s) => (
+                <AdSlot key={s.id} adUnitCode={s.adUnitCode} />
+              ))}
 
               {recommended.length > 0 && (
                 <div className="mt-16 pt-12 border-t border-border">

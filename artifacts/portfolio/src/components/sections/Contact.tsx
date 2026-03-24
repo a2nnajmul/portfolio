@@ -1,7 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { FadeIn } from "@/components/FadeIn";
 import { MapPin, Phone, Mail, Send, Loader2, CheckCircle2, AlertCircle, X } from "lucide-react";
+import { apiFetch } from "@/lib/api";
+
+interface ContactContent {
+  heading: string;
+  email: string;
+  phone: string;
+  location: string;
+  formHeading: string;
+}
+
+const DEFAULTS: ContactContent = {
+  heading: "Get In Touch",
+  email: "a2nnajmul@gmail.com",
+  phone: "(+880) 1793908183",
+  location: "Panchua, Kapasia, 1743\nDhaka, Bangladesh",
+  formHeading: "Send Me a Message",
+};
 
 type StatusType = "success" | "error" | null;
 
@@ -9,6 +26,15 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<StatusType>(null);
   const [statusMessage, setStatusMessage] = useState("");
+  const [contactInfo, setContactInfo] = useState<ContactContent>(DEFAULTS);
+
+  useEffect(() => {
+    apiFetch<ContactContent>("/content/contact")
+      .then((data) => {
+        if (data && data.heading) setContactInfo(data);
+      })
+      .catch(() => {});
+  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -93,7 +119,7 @@ export default function Contact() {
           {/* Contact Info */}
           <FadeIn className="lg:col-span-2 space-y-6">
             <div className="bg-card rounded-3xl p-8 border border-border shadow-lg">
-              <h3 className="text-2xl font-bold text-foreground mb-8">Get In Touch</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-8">{contactInfo.heading}</h3>
 
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
@@ -102,8 +128,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Email</p>
-                    <a href="mailto:a2nnajmul@gmail.com" className="text-foreground hover:text-primary transition-colors font-medium text-lg">
-                      a2nnajmul@gmail.com
+                    <a href={`mailto:${contactInfo.email}`} className="text-foreground hover:text-primary transition-colors font-medium text-lg">
+                      {contactInfo.email}
                     </a>
                   </div>
                 </div>
@@ -114,8 +140,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Phone</p>
-                    <a href="tel:+8801793908183" className="text-foreground hover:text-primary transition-colors font-medium text-lg">
-                      (+880) 1793908183
+                    <a href={`tel:${contactInfo.phone.replace(/[^+\d]/g, "")}`} className="text-foreground hover:text-primary transition-colors font-medium text-lg">
+                      {contactInfo.phone}
                     </a>
                   </div>
                 </div>
@@ -126,8 +152,8 @@ export default function Contact() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-muted-foreground mb-1">Location</p>
-                    <p className="text-foreground font-medium text-lg">
-                      Panchua, Kapasia, 1743<br />Dhaka, Bangladesh
+                    <p className="text-foreground font-medium text-lg whitespace-pre-line">
+                      {contactInfo.location}
                     </p>
                   </div>
                 </div>
@@ -138,7 +164,7 @@ export default function Contact() {
           {/* Contact Form */}
           <FadeIn delay={200} className="lg:col-span-3">
             <div className="bg-card rounded-3xl p-8 md:p-10 border border-border shadow-lg">
-              <h3 className="text-2xl font-bold text-foreground mb-8">Send Me a Message</h3>
+              <h3 className="text-2xl font-bold text-foreground mb-8">{contactInfo.formHeading}</h3>
 
               {/* Status Banner — always mounted, visibility controlled by status */}
               <div
