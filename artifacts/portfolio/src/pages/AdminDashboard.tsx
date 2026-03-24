@@ -475,6 +475,27 @@ function SkillsEditor() {
   function removeCore(id: string) {
     setData((d) => ({ ...d, core: d.core.filter((s) => s.id !== id) }));
   }
+  function moveCore(id: string, dir: "up" | "down") {
+    setData((d) => {
+      const idx = d.core.findIndex((s) => s.id === id);
+      if (dir === "up" && idx === 0) return d;
+      if (dir === "down" && idx === d.core.length - 1) return d;
+      const next = [...d.core];
+      const swapIdx = dir === "up" ? idx - 1 : idx + 1;
+      [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+      return { ...d, core: next };
+    });
+  }
+  function moveTech(idx: number, dir: "up" | "down") {
+    setData((d) => {
+      if (dir === "up" && idx === 0) return d;
+      if (dir === "down" && idx === d.technical.length - 1) return d;
+      const next = [...d.technical];
+      const swapIdx = dir === "up" ? idx - 1 : idx + 1;
+      [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+      return { ...d, technical: next };
+    });
+  }
   function addTech() {
     if (!newTech.trim()) return;
     setData((d) => ({ ...d, technical: [...d.technical, newTech.trim()] }));
@@ -502,16 +523,21 @@ function SkillsEditor() {
 
       <h3 className="font-semibold text-foreground mb-4">Core Skills</h3>
       <div className="space-y-4 mb-6">
-        {data.core.map((s) => (
+        {data.core.map((s, i) => (
           <div key={s.id} className="bg-card border border-border rounded-2xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-sm font-medium text-muted-foreground">#{i + 1}</span>
+              <div className="flex gap-2">
+                <button onClick={() => moveCore(s.id, "up")} disabled={i === 0} className="p-1.5 rounded-lg hover:bg-muted disabled:opacity-30 transition"><ChevronUp className="w-4 h-4" /></button>
+                <button onClick={() => moveCore(s.id, "down")} disabled={i === data.core.length - 1} className="p-1.5 rounded-lg hover:bg-muted disabled:opacity-30 transition"><ChevronDown className="w-4 h-4" /></button>
+                <button onClick={() => removeCore(s.id)} className="p-1.5 rounded-lg hover:bg-destructive/10 text-destructive transition"><Trash2 className="w-4 h-4" /></button>
+              </div>
+            </div>
             <div className="grid gap-3 sm:grid-cols-3">
               <Field label="Name" value={s.name} onChange={(v) => updateCore(s.id, "name", v)} />
               <Field label="Icon" value={s.icon} onChange={(v) => updateCore(s.id, "icon", v)} placeholder="Palette, Layout, PenTool…" />
               <Field label="Description" value={s.description} onChange={(v) => updateCore(s.id, "description", v)} />
             </div>
-            <button onClick={() => removeCore(s.id)} className="mt-3 flex items-center gap-1.5 text-xs text-destructive hover:underline">
-              <Trash2 className="w-3 h-3" />Remove
-            </button>
           </div>
         ))}
         <button onClick={addCore} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-sm font-medium hover:bg-muted transition">
@@ -522,9 +548,11 @@ function SkillsEditor() {
       <h3 className="font-semibold text-foreground mb-4">Technical & Office Skills</h3>
       <div className="flex flex-wrap gap-2 mb-3">
         {data.technical.map((t, i) => (
-          <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-muted rounded-full text-sm">
+          <span key={i} className="inline-flex items-center gap-1 px-3 py-1.5 bg-muted rounded-full text-sm">
+            <button onClick={() => moveTech(i, "up")} disabled={i === 0} className="text-muted-foreground hover:text-foreground disabled:opacity-30"><ChevronUp className="w-3 h-3" /></button>
             {t}
-            <button onClick={() => removeTech(i)} className="text-muted-foreground hover:text-destructive">
+            <button onClick={() => moveTech(i, "down")} disabled={i === data.technical.length - 1} className="text-muted-foreground hover:text-foreground disabled:opacity-30"><ChevronDown className="w-3 h-3" /></button>
+            <button onClick={() => removeTech(i)} className="text-muted-foreground hover:text-destructive ml-0.5">
               <X className="w-3 h-3" />
             </button>
           </span>
