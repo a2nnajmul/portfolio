@@ -45,6 +45,21 @@ interface BlogPost {
   imageUrl: string;
   date: string;
   createdAt: string;
+  tags?: string[];
+  featured?: boolean;
+  readTime?: string;
+}
+
+interface AdsSettings {
+  enabled: boolean;
+  headScript: string;
+  adUnitCode: string;
+}
+
+function calcReadTime(content: string): string {
+  const words = content.trim().split(/\s+/).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
 }
 
 router.post("/admin/login", (req: Request, res: Response) => {
@@ -167,14 +182,18 @@ router.get("/admin/blog", requireAuth, (_req: Request, res: Response) => {
 router.post("/admin/blog", requireAuth, (req: Request, res: Response) => {
   const posts = getJson<BlogPost[]>("blog", []);
   const body = req.body as Partial<BlogPost>;
+  const content = String(body.content ?? "").slice(0, 50000);
   const post: BlogPost = {
     id: randomUUID(),
     title: String(body.title ?? "").slice(0, 200),
     description: String(body.description ?? "").slice(0, 500),
-    content: String(body.content ?? "").slice(0, 50000),
+    content,
     imageUrl: String(body.imageUrl ?? "").slice(0, 500),
     date: String(body.date ?? new Date().toISOString().split("T")[0]).slice(0, 20),
     createdAt: new Date().toISOString(),
+    tags: Array.isArray(body.tags) ? body.tags.map((t: string) => String(t).slice(0, 50)).slice(0, 10) : [],
+    featured: Boolean(body.featured),
+    readTime: calcReadTime(content),
   };
   posts.unshift(post);
   putJson("blog", posts);
@@ -186,13 +205,17 @@ router.put("/admin/blog/:id", requireAuth, (req: Request, res: Response) => {
   const idx = posts.findIndex((p) => p.id === req.params["id"]);
   if (idx === -1) { res.status(404).json({ error: "Not found" }); return; }
   const body = req.body as Partial<BlogPost>;
+  const content = String(body.content ?? posts[idx].content).slice(0, 50000);
   posts[idx] = {
     ...posts[idx],
     title: String(body.title ?? posts[idx].title).slice(0, 200),
     description: String(body.description ?? posts[idx].description).slice(0, 500),
-    content: String(body.content ?? posts[idx].content).slice(0, 50000),
+    content,
     imageUrl: String(body.imageUrl ?? posts[idx].imageUrl).slice(0, 500),
     date: String(body.date ?? posts[idx].date).slice(0, 20),
+    tags: Array.isArray(body.tags) ? body.tags.map((t: string) => String(t).slice(0, 50)).slice(0, 10) : (posts[idx].tags ?? []),
+    featured: body.featured !== undefined ? Boolean(body.featured) : (posts[idx].featured ?? false),
+    readTime: calcReadTime(content),
   };
   putJson("blog", posts);
   res.json(posts[idx]);
@@ -241,6 +264,21 @@ router.put("/admin/content/:section", requireAuth, (req: Request, res: Response)
   }
   putJson(`content:${section}`, data);
   res.json(data);
+});
+
+router.get("/admin/settings/ads", requireAuth, (_req: Request, res: Response) => {
+  res.json(getJson<AdsSettings>("settings:ads", { enabled: false, headScript: "", adUnitCode: "" }));
+});
+
+router.put("/admin/settings/ads", requireAuth, (req: Request, res: Response) => {
+  const body = req.body as Partial<AdsSettings>;
+  const updated: AdsSettings = {
+    enabled: Boolean(body.enabled),
+    headScript: String(body.headScript ?? "").slice(0, 5000),
+    adUnitCode: String(body.adUnitCode ?? "").slice(0, 5000),
+  };
+  putJson("settings:ads", updated);
+  res.json(updated);
 });
 
 router.put("/admin/password", requireAuth, (req: Request, res: Response) => {

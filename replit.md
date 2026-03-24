@@ -43,8 +43,16 @@ A single-page portfolio website for **Najmul Alam** — student & graphic design
 3. **Skills** — 4 core skill cards (Graphic Design, UI/UX, Adobe Illustrator, Photoshop) + tech/office pills
 4. **Experience** — Timeline: Facebook (Ads Marketing), YouTube (Web Solution)
 5. **Portfolio** — 6-item gradient grid with hover overlay
-6. **Contact** — Info cards (email/phone/location) + contact form with inline success/error feedback
-7. **Footer** — Social links (Facebook/Twitter/Instagram), quick links, copyright
+6. **Blog** — Grid of blog post cards with images, dates, read times; links to `/blog/:id` detail pages
+7. **Contact** — Info cards (email/phone/location) + contact form with inline success/error feedback
+8. **Footer** — Social links (Facebook/Twitter/Instagram), quick links, copyright
+
+### Blog System
+- **Blog cards** show title, description, date, read time, and cover image
+- **Blog detail page** (`/blog/:id`) shows full post with tags, read time, markdown-style content rendering, and a "Recommended Posts" section with 3 related posts at the bottom
+- **Blog data model**: `id, title, description, content, imageUrl, date, createdAt, tags[], featured, readTime`
+- **Ad integration**: Blog posts can display Google AdSense ads (two positions: after header, before recommended posts). Ads are managed via the admin panel Settings → Ad Management. User pastes AdSense head script and ad unit code, toggles on/off. KV key: `settings:ads`
+- **6 demo blog posts** seeded on first run covering design topics (logo design, color theory, UI/UX, typography, social media, workflow)
 
 ### Key Design Details
 - **Primary color**: Orange gradient (`#f97316` → `#ea580c`)
@@ -79,10 +87,11 @@ Express 5 API, mounted at path `/api`. Both Express server and Cloudflare Worker
 - `GET /api/projects` — list portfolio projects
 - `GET /api/experience` — list experience entries
 - `GET /api/about` — get bio/about info
-- `GET /api/blog` — list blog posts
+- `GET /api/blog` — list blog posts (includes tags, featured, readTime fields)
 - `GET /api/blog/:id` — single blog post detail
 - `GET /api/cv` — get current CV URL
 - `GET /api/content/:section` — get content for hero, skills, or about-tabs
+- `GET /api/settings/ads` — public ad settings (returns enabled + adUnitCode only, never headScript)
 
 ### Admin Routes (JWT auth required)
 - `POST /api/admin/login` — authenticate with password, returns token
@@ -93,10 +102,11 @@ Express 5 API, mounted at path `/api`. Both Express server and Cloudflare Worker
 - `GET /api/admin/messages` — list messages
 - `DELETE /api/admin/messages/:id` — delete message
 - `PUT /api/admin/messages/:id/read` — toggle read/unread status
-- `GET/POST /api/admin/blog` — list/create blog posts
+- `GET/POST /api/admin/blog` — list/create blog posts (supports tags, featured fields; readTime auto-calculated)
 - `PUT/DELETE /api/admin/blog/:id` — update/delete blog post
 - `GET/PUT /api/admin/cv` — get/update CV URL
 - `GET/PUT /api/admin/content/:section` — get/update content sections (hero, skills, about-tabs)
+- `GET/PUT /api/admin/settings/ads` — get/update ad settings (enabled, headScript, adUnitCode)
 - `PUT /api/admin/password` — change admin password (requires currentPassword + newPassword)
 
 ### Storage (KV Keys)
@@ -105,6 +115,7 @@ Express 5 API, mounted at path `/api`. Both Express server and Cloudflare Worker
 - `content:hero` — `{ name, greeting, title, buttonPrimary, buttonSecondary }`
 - `content:skills` — `{ core: [...], technical: [...] }`
 - `content:about-tabs` — `{ education: [...], languages: [...], extraCurricular: [...] }`
+- `settings:ads` — `{ enabled: boolean, headScript: string, adUnitCode: string }`
 - `admin_password_hash` — SHA-256 hex hash (set after password change)
 
 ### Contact Route Validation

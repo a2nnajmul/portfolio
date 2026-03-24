@@ -30,6 +30,11 @@ router.get("/cv", (_req: Request, res: Response) => {
   res.json(getJson("cv", { url: "" }));
 });
 
+router.get("/settings/ads", (_req: Request, res: Response) => {
+  const ads = getJson<{ enabled: boolean; adUnitCode: string }>("settings:ads", { enabled: false, adUnitCode: "" });
+  res.json({ enabled: ads.enabled, adUnitCode: ads.adUnitCode });
+});
+
 router.get("/content/:section", (req: Request, res: Response) => {
   const section = String(req.params["section"]);
   const validSections = ["hero", "skills", "about-tabs"];

@@ -10,6 +10,8 @@ interface BlogPost {
   description: string;
   imageUrl: string;
   date: string;
+  tags?: string[];
+  readTime?: string;
 }
 
 export default function Blog() {
@@ -56,9 +58,14 @@ export default function Blog() {
                     <div className="aspect-[16/9] bg-gradient-to-br from-primary/20 to-orange-400/10" />
                   )}
                   <div className="p-6">
-                    <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
-                      <Calendar className="w-4 h-4" />
-                      <span>{post.date}</span>
+                    <div className="flex items-center gap-3 text-muted-foreground text-sm mb-3">
+                      <span className="inline-flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4" />
+                        {post.date}
+                      </span>
+                      {post.readTime && (
+                        <span className="text-xs">{post.readTime}</span>
+                      )}
                     </div>
                     <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
                       {post.title}

@@ -4,7 +4,7 @@ import {
   LogOut, FolderOpen, Briefcase, User, Mail,
   Plus, Pencil, Trash2, Save, X, ChevronUp, ChevronDown,
   LayoutDashboard, FileText, FileDown, Palette, Settings, Menu,
-  Eye, EyeOff, ExternalLink, Lock,
+  Eye, EyeOff, ExternalLink, Lock, Star, Tag, Megaphone,
 } from "lucide-react";
 
 type Tab = "dashboard" | "blog" | "cv" | "content" | "projects" | "experience" | "about" | "messages" | "settings";
@@ -23,6 +23,7 @@ interface Message {
 interface BlogPost {
   id: string; title: string; description: string; content: string;
   imageUrl: string; date: string; createdAt: string;
+  tags?: string[]; featured?: boolean; readTime?: string;
 }
 
 const GRADIENTS = [
@@ -194,7 +195,7 @@ function BlogTab() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<BlogPost | null>(null);
   const [creating, setCreating] = useState(false);
-  const [form, setForm] = useState({ title: "", description: "", content: "", imageUrl: "", date: "" });
+  const [form, setForm] = useState({ title: "", description: "", content: "", imageUrl: "", date: "", tags: "" as string, featured: false });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -203,25 +204,40 @@ function BlogTab() {
   }, []);
 
   function startCreate() {
-    setForm({ title: "", description: "", content: "", imageUrl: "", date: new Date().toISOString().split("T")[0] });
+    setForm({ title: "", description: "", content: "", imageUrl: "", date: new Date().toISOString().split("T")[0], tags: "", featured: false });
     setEditing(null); setCreating(true); setError("");
   }
   function startEdit(p: BlogPost) {
-    setForm({ title: p.title, description: p.description, content: p.content, imageUrl: p.imageUrl, date: p.date });
+    setForm({ title: p.title, description: p.description, content: p.content, imageUrl: p.imageUrl, date: p.date, tags: (p.tags ?? []).join(", "), featured: p.featured ?? false });
     setEditing(p); setCreating(false); setError("");
   }
   function cancel() { setCreating(false); setEditing(null); setError(""); }
+
+  function estimateReadTime(text: string): string {
+    const words = text.trim().split(/\s+/).length;
+    const mins = Math.max(1, Math.ceil(words / 200));
+    return `${mins} min read`;
+  }
 
   async function save(e: FormEvent) {
     e.preventDefault();
     if (!form.title.trim()) { setError("Title is required"); return; }
     setSaving(true); setError("");
+    const payload = {
+      title: form.title,
+      description: form.description,
+      content: form.content,
+      imageUrl: form.imageUrl,
+      date: form.date,
+      tags: form.tags.split(",").map((t) => t.trim()).filter(Boolean),
+      featured: form.featured,
+    };
     try {
       if (editing) {
-        const updated = await adminFetch<BlogPost>(`/admin/blog/${editing.id}`, { method: "PUT", body: JSON.stringify(form) });
+        const updated = await adminFetch<BlogPost>(`/admin/blog/${editing.id}`, { method: "PUT", body: JSON.stringify(payload) });
         setPosts((prev) => prev.map((p) => p.id === updated.id ? updated : p));
       } else {
-        const created = await adminFetch<BlogPost>("/admin/blog", { method: "POST", body: JSON.stringify(form) });
+        const created = await adminFetch<BlogPost>("/admin/blog", { method: "POST", body: JSON.stringify(payload) });
         setPosts((prev) => [created, ...prev]);
       }
       cancel();
@@ -260,12 +276,39 @@ function BlogTab() {
               <textarea
                 value={form.content}
                 onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
-                rows={10}
+                rows={12}
                 className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition resize-y font-mono text-sm"
                 placeholder="Write your blog post content here..."
               />
+              <div className="mt-2 flex items-center justify-between">
+                <div className="flex flex-wrap gap-3 text-xs text-muted-foreground">
+                  <span><code className="bg-muted px-1.5 py-0.5 rounded"># Heading</code></span>
+                  <span><code className="bg-muted px-1.5 py-0.5 rounded">## Subheading</code></span>
+                  <span><code className="bg-muted px-1.5 py-0.5 rounded">### Section</code></span>
+                  <span><code className="bg-muted px-1.5 py-0.5 rounded">- List item</code></span>
+                  <span>Empty line = paragraph break</span>
+                </div>
+                {form.content.trim() && (
+                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">{estimateReadTime(form.content)}</span>
+                )}
+              </div>
             </div>
+            <Field label="Tags" value={form.tags} onChange={(v) => setForm((f) => ({ ...f, tags: v }))} placeholder="Design, Branding, Tips (comma-separated)" />
             <Field label="Image URL" value={form.imageUrl} onChange={(v) => setForm((f) => ({ ...f, imageUrl: v }))} placeholder="https://…" />
+            <div className="sm:col-span-2">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div
+                  onClick={() => setForm((f) => ({ ...f, featured: !f.featured }))}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${form.featured ? "bg-primary" : "bg-muted"}`}
+                >
+                  <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${form.featured ? "translate-x-5" : ""}`} />
+                </div>
+                <span className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <Star className={`w-4 h-4 ${form.featured ? "text-primary fill-primary" : "text-muted-foreground"}`} />
+                  Featured Post
+                </span>
+              </label>
+            </div>
             <div className="sm:col-span-2 flex gap-3 pt-2">
               <button type="submit" disabled={saving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 disabled:opacity-60 transition">
                 <Save className="w-4 h-4" />{saving ? "Saving…" : "Save"}
@@ -289,8 +332,14 @@ function BlogTab() {
             <div key={p.id} className="bg-card border border-border rounded-2xl p-6">
               <div className="flex items-start justify-between gap-4 mb-2">
                 <div className="min-w-0">
-                  <h3 className="font-bold text-foreground text-lg truncate">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground">{p.date}</p>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    {p.featured && <Star className="w-4 h-4 text-primary fill-primary flex-shrink-0" />}
+                    <h3 className="font-bold text-foreground text-lg truncate">{p.title}</h3>
+                  </div>
+                  <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <span>{p.date}</span>
+                    {p.readTime && <span>{p.readTime}</span>}
+                  </div>
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
                   <button onClick={() => startEdit(p)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-medium hover:bg-muted transition">
@@ -301,7 +350,16 @@ function BlogTab() {
                   </button>
                 </div>
               </div>
-              <p className="text-muted-foreground text-sm line-clamp-2">{p.description}</p>
+              <p className="text-muted-foreground text-sm line-clamp-2 mb-2">{p.description}</p>
+              {p.tags && p.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5">
+                  {p.tags.map((tag) => (
+                    <span key={tag} className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
+                      <Tag className="w-2.5 h-2.5" />{tag}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -994,6 +1052,38 @@ function SettingsTab() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
+  const [adsEnabled, setAdsEnabled] = useState(false);
+  const [headScript, setHeadScript] = useState("");
+  const [adUnitCode, setAdUnitCode] = useState("");
+  const [adsSaving, setAdsSaving] = useState(false);
+  const [adsError, setAdsError] = useState("");
+  const [adsSaved, setAdsSaved] = useState(false);
+  const [adsLoading, setAdsLoading] = useState(true);
+
+  useEffect(() => {
+    adminFetch<{ enabled: boolean; headScript: string; adUnitCode: string }>("/admin/settings/ads")
+      .then((d) => { setAdsEnabled(d.enabled); setHeadScript(d.headScript); setAdUnitCode(d.adUnitCode); })
+      .catch(() => {})
+      .finally(() => setAdsLoading(false));
+  }, []);
+
+  async function saveAds(e: FormEvent) {
+    e.preventDefault();
+    setAdsSaving(true); setAdsError(""); setAdsSaved(false);
+    try {
+      const updated = await adminFetch<{ enabled: boolean; headScript: string; adUnitCode: string }>(
+        "/admin/settings/ads",
+        { method: "PUT", body: JSON.stringify({ enabled: adsEnabled, headScript, adUnitCode }) }
+      );
+      setAdsEnabled(updated.enabled);
+      setHeadScript(updated.headScript);
+      setAdUnitCode(updated.adUnitCode);
+      setAdsSaved(true);
+      setTimeout(() => setAdsSaved(false), 3000);
+    } catch { setAdsError("Failed to save ad settings"); }
+    finally { setAdsSaving(false); }
+  }
+
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError(""); setSuccess(false);
@@ -1027,8 +1117,75 @@ function SettingsTab() {
   }
 
   return (
-    <div className="max-w-lg">
-      <h2 className="text-2xl font-bold text-foreground mb-6">Settings</h2>
+    <div className="max-w-2xl space-y-8">
+      <h2 className="text-2xl font-bold text-foreground">Settings</h2>
+
+      <div className="bg-card border border-border rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 rounded-xl bg-orange-500/10 flex items-center justify-center">
+            <Megaphone className="w-5 h-5 text-orange-500" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-foreground">Ad Management</h3>
+            <p className="text-xs text-muted-foreground">Paste your Google AdSense code here. Ads will appear automatically on all blog posts.</p>
+          </div>
+        </div>
+
+        {adsLoading ? <p className="text-muted-foreground text-sm">Loading…</p> : (
+          <form onSubmit={saveAds} className="space-y-5">
+            <div className="flex items-center gap-3">
+              <div
+                onClick={() => setAdsEnabled(!adsEnabled)}
+                className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${adsEnabled ? "bg-primary" : "bg-muted"}`}
+              >
+                <div className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${adsEnabled ? "translate-x-5" : ""}`} />
+              </div>
+              <span className="text-sm font-medium text-foreground">{adsEnabled ? "Ads Enabled" : "Ads Disabled"}</span>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">AdSense Head Script</label>
+              <textarea
+                value={headScript}
+                onChange={(e) => setHeadScript(e.target.value)}
+                rows={3}
+                placeholder={'<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXX" crossorigin="anonymous"></script>'}
+                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition resize-y font-mono text-xs"
+              />
+              <p className="text-xs text-muted-foreground mt-1">The AdSense script tag from your Google AdSense account. This loads the ad library.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Ad Unit Code</label>
+              <textarea
+                value={adUnitCode}
+                onChange={(e) => setAdUnitCode(e.target.value)}
+                rows={4}
+                placeholder={'<ins class="adsbygoogle"\n  style="display:block"\n  data-ad-client="ca-pub-XXXXXX"\n  data-ad-slot="YYYYYYY"\n  data-ad-format="auto"></ins>\n<script>(adsbygoogle = window.adsbygoogle || []).push({});</script>'}
+                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition resize-y font-mono text-xs"
+              />
+              <p className="text-xs text-muted-foreground mt-1">The ad unit HTML block. This will be inserted into blog posts automatically.</p>
+            </div>
+
+            <div className="bg-muted/50 rounded-xl p-4 text-xs text-muted-foreground space-y-1">
+              <p className="font-medium text-foreground text-sm">Ad Placement Preview</p>
+              <p>Ads will appear in two positions on each blog post:</p>
+              <p>1. After the post header (title, tags, description)</p>
+              <p>2. Before the recommended posts section</p>
+            </div>
+
+            {adsError && <p role="alert" className="text-sm text-destructive bg-destructive/10 px-4 py-2 rounded-lg">{adsError}</p>}
+
+            <div className="flex items-center gap-4">
+              <button type="submit" disabled={adsSaving} className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-medium text-sm hover:bg-primary/90 disabled:opacity-60 transition">
+                <Save className="w-4 h-4" />{adsSaving ? "Saving…" : "Save Ad Settings"}
+              </button>
+              {adsSaved && <span className="text-sm text-green-600 dark:text-green-400">Saved!</span>}
+            </div>
+          </form>
+        )}
+      </div>
+
       <div className="bg-card border border-border rounded-2xl p-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">

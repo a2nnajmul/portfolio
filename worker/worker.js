@@ -133,19 +133,37 @@ const DEFAULT_ABOUT_TABS = {
   extraCurricular: [{ id: "1", activity: "Freelance Graphic Design", description: "Creating designs for local and international clients." }],
 };
 
+function calcReadTime(content) {
+  const words = content.trim().split(/\s+/).length;
+  const mins = Math.max(1, Math.ceil(words / 200));
+  return `${mins} min read`;
+}
+
+const DEFAULT_BLOG = [
+  { id: "demo-1", title: "The Art of Minimalist Logo Design", description: "Discover the principles behind creating clean, memorable logos that stand the test of time.", content: "## Why Minimalism Works\n\nIn a world overflowing with visual noise, minimalist logos cut through the clutter. They are instantly recognizable, easily reproducible across media, and timeless.\n\n## Core Principles\n\n- Simplicity: Remove everything that doesn't serve the message\n- Versatility: A great logo works at any size\n- Memorability: Simple shapes are easier to recall\n- Timelessness: Avoid trendy elements\n\n## Tips for Beginners\n\nTest your logo in black and white first. Always design in vector format for scalability.", imageUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?w=800&q=80", date: "2026-03-20", tags: ["Logo Design", "Branding"], featured: true, createdAt: "2026-03-20T10:00:00Z" },
+  { id: "demo-2", title: "Color Theory for Graphic Designers", description: "Understanding color psychology and how to create harmonious palettes.", content: "## The Power of Color\n\nColor evokes emotions, creates hierarchy, and guides the viewer's eye.\n\n## Color Psychology\n\n- Red: Energy, passion\n- Blue: Trust, calm\n- Green: Growth, nature\n- Orange: Creativity, warmth\n\n## Building a Palette\n\nStart with one primary color. Add a secondary for contrast. Include neutrals for balance.", imageUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=800&q=80", date: "2026-03-15", tags: ["Color Theory", "Design Basics"], featured: false, createdAt: "2026-03-15T14:00:00Z" },
+  { id: "demo-3", title: "Getting Started with UI/UX Design", description: "A beginner-friendly guide to UI and UX design fundamentals.", content: "## What is UI/UX Design?\n\nUI focuses on visual elements. UX ensures interactions are intuitive.\n\n## The Process\n\n### 1. Research\nUnderstand your users.\n\n### 2. Wireframing\nSketch low-fidelity layouts.\n\n### 3. Prototyping\nBuild interactive mockups.\n\n### 4. Visual Design\nApply color, typography, and imagery.", imageUrl: "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=800&q=80", date: "2026-03-10", tags: ["UI/UX", "Design"], featured: false, createdAt: "2026-03-10T09:00:00Z" },
+  { id: "demo-4", title: "Typography Tips Every Designer Should Know", description: "Essential tips for choosing, pairing, and using fonts effectively.", content: "## Why Typography Matters\n\nTypography communicates mood and affects readability.\n\n## Font Pairing Rules\n\n- Pair serif with sans-serif\n- Limit to 2-3 fonts per project\n- Ensure contrast between heading and body\n\n## Pro Tips\n\nAlways left-align body text. Test at different screen sizes.", imageUrl: "https://images.unsplash.com/photo-1524578271613-d550eacf6090?w=800&q=80", date: "2026-03-05", tags: ["Typography", "Fonts"], featured: false, createdAt: "2026-03-05T11:00:00Z" },
+  { id: "demo-5", title: "Creating Stunning Social Media Graphics", description: "Design eye-catching social media posts that drive engagement.", content: "## Why Social Media Design Matters\n\nPosts with compelling graphics get more engagement.\n\n## Design Principles\n\n- Bold headlines\n- Limited text\n- Brand consistency\n- High contrast\n\n## Tools\n\nCanva for quick graphics. Photoshop for more control.", imageUrl: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80", date: "2026-02-28", tags: ["Social Media", "Marketing"], featured: false, createdAt: "2026-02-28T16:00:00Z" },
+  { id: "demo-6", title: "From Concept to Client: My Design Workflow", description: "A behind-the-scenes look at my design process from brief to delivery.", content: "## My Design Process\n\n### Discovery\nUnderstand the client's needs.\n\n### Research\nAnalyze competitors and create mood boards.\n\n### Sketching\nStart with pen and paper.\n\n### Digital Execution\nBring concepts to life in Illustrator and Photoshop.\n\n### Delivery\nProvide files in multiple formats with brand guidelines.", imageUrl: "https://images.unsplash.com/photo-1558655146-9f40138edfeb?w=800&q=80", date: "2026-02-20", tags: ["Workflow", "Freelance"], featured: true, createdAt: "2026-02-20T08:00:00Z" },
+].map(p => ({ ...p, readTime: calcReadTime(p.content) }));
+
+const DEFAULT_ADS = { enabled: false, headScript: "", adUnitCode: "" };
+
 async function seedKVIfEmpty(kv) {
   if (!kv) return;
-  const keys = ["projects", "experience", "about", "messages", "blog", "content:hero", "content:skills", "content:about-tabs"];
+  const keys = ["projects", "experience", "about", "messages", "blog", "content:hero", "content:skills", "content:about-tabs", "settings:ads"];
   const values = await Promise.all(keys.map(k => kv.get(k)));
   const writes = [];
   if (!values[0]) writes.push(kv.put("projects", JSON.stringify(DEFAULT_PROJECTS)));
   if (!values[1]) writes.push(kv.put("experience", JSON.stringify(DEFAULT_EXPERIENCE)));
   if (!values[2]) writes.push(kv.put("about", JSON.stringify(DEFAULT_ABOUT)));
   if (!values[3]) writes.push(kv.put("messages", JSON.stringify([])));
-  if (!values[4]) writes.push(kv.put("blog", JSON.stringify([])));
+  if (!values[4]) writes.push(kv.put("blog", JSON.stringify(DEFAULT_BLOG)));
   if (!values[5]) writes.push(kv.put("content:hero", JSON.stringify(DEFAULT_HERO)));
   if (!values[6]) writes.push(kv.put("content:skills", JSON.stringify(DEFAULT_SKILLS)));
   if (!values[7]) writes.push(kv.put("content:about-tabs", JSON.stringify(DEFAULT_ABOUT_TABS)));
+  if (!values[8]) writes.push(kv.put("settings:ads", JSON.stringify(DEFAULT_ADS)));
   await Promise.all(writes);
 }
 
@@ -225,6 +243,11 @@ export default {
 
     if (path === "/api/cv" && request.method === "GET") {
       return json(kv ? await getJson(kv, "cv", { url: "" }) : { url: "" }, 200, origin);
+    }
+
+    if (path === "/api/settings/ads" && request.method === "GET") {
+      const ads = kv ? await getJson(kv, "settings:ads", { enabled: false, adUnitCode: "" }) : { enabled: false, adUnitCode: "" };
+      return json({ enabled: ads.enabled, adUnitCode: ads.adUnitCode }, 200, origin);
     }
 
     const contentPublicMatch = path.match(/^\/api\/content\/([^/]+)$/);
@@ -336,14 +359,18 @@ export default {
         if (request.method === "GET") return json(await getJson(kv, "blog", []), 200, origin);
         if (request.method === "POST") {
           const posts = await getJson(kv, "blog", []);
+          const content = String(body?.content ?? "").slice(0, 50000);
           const post = {
             id: randomId(),
             title: String(body?.title ?? "").slice(0, 200),
             description: String(body?.description ?? "").slice(0, 500),
-            content: String(body?.content ?? "").slice(0, 50000),
+            content,
             imageUrl: String(body?.imageUrl ?? "").slice(0, 500),
             date: String(body?.date ?? new Date().toISOString().split("T")[0]).slice(0, 20),
             createdAt: new Date().toISOString(),
+            tags: Array.isArray(body?.tags) ? body.tags.map(t => String(t).slice(0, 50)).slice(0, 10) : [],
+            featured: Boolean(body?.featured),
+            readTime: calcReadTime(content),
           };
           posts.unshift(post);
           await kv.put("blog", JSON.stringify(posts));
@@ -358,13 +385,17 @@ export default {
         const idx = posts.findIndex((p) => p.id === id);
         if (request.method === "PUT") {
           if (idx === -1) return json({ error: "Not found" }, 404, origin);
+          const content = String(body?.content ?? posts[idx].content).slice(0, 50000);
           posts[idx] = {
             ...posts[idx],
             title: String(body?.title ?? posts[idx].title).slice(0, 200),
             description: String(body?.description ?? posts[idx].description).slice(0, 500),
-            content: String(body?.content ?? posts[idx].content).slice(0, 50000),
+            content,
             imageUrl: String(body?.imageUrl ?? posts[idx].imageUrl).slice(0, 500),
             date: String(body?.date ?? posts[idx].date).slice(0, 20),
+            tags: Array.isArray(body?.tags) ? body.tags.map(t => String(t).slice(0, 50)).slice(0, 10) : (posts[idx].tags ?? []),
+            featured: body?.featured !== undefined ? Boolean(body.featured) : (posts[idx].featured ?? false),
+            readTime: calcReadTime(content),
           };
           await kv.put("blog", JSON.stringify(posts));
           return json(posts[idx], 200, origin);
@@ -397,6 +428,20 @@ export default {
           if (!body || typeof body !== "object") return json({ error: "Invalid data" }, 400, origin);
           await kv.put(`content:${section}`, JSON.stringify(body));
           return json(body, 200, origin);
+        }
+      }
+
+      // Ad settings
+      if (path === "/api/admin/settings/ads") {
+        if (request.method === "GET") return json(await getJson(kv, "settings:ads", { enabled: false, headScript: "", adUnitCode: "" }), 200, origin);
+        if (request.method === "PUT") {
+          const updated = {
+            enabled: Boolean(body?.enabled),
+            headScript: String(body?.headScript ?? "").slice(0, 5000),
+            adUnitCode: String(body?.adUnitCode ?? "").slice(0, 5000),
+          };
+          await kv.put("settings:ads", JSON.stringify(updated));
+          return json(updated, 200, origin);
         }
       }
 
