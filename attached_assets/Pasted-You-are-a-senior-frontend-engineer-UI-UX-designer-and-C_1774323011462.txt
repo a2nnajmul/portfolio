@@ -1,0 +1,138 @@
+You are a senior frontend engineer, UI/UX designer, and Cloudflare full-stack expert.
+
+I already have a portfolio design generated from a reference image. The design is good, but there are issues and improvements needed.
+
+Your task is to FIX, IMPROVE, and EXTEND the project professionally.
+
+========================
+🛠️ HERO SECTION FIX (CRITICAL)
+========================
+The cover/profile image in the hero section is not properly aligned or responsive.
+
+Fix it with:
+- Proper object-fit: cover / contain (based on layout)
+- Use object-position: center right (or best visual alignment)
+- Ensure no cropping of face on all screen sizes
+- Maintain aspect ratio
+- Use responsive container (aspect-[4/5] or similar)
+- Add overlay gradient for better text readability
+- Ensure image scales perfectly on:
+  - Mobile
+  - Tablet
+  - Desktop
+
+- Improve layout:
+  - Use grid/flex properly
+  - Text and image spacing must feel balanced
+  - No overflow or awkward gaps
+
+========================
+✨ UI/UX IMPROVEMENTS
+========================
+- Upgrade hero section with:
+  - Subtle animated gradient background
+  - Better CTA button (hover + ripple effect)
+  - Smooth entrance animation (optimized)
+
+- Improve overall spacing system (consistent padding/margin)
+- Add better typography scale
+- Improve card UI (skills, portfolio)
+- Add hover elevation + soft shadow transitions
+- Make everything feel more premium and modern
+
+========================
+📊 ADMIN DASHBOARD (FREE + CLOUDFLARE COMPATIBLE)
+========================
+Build a lightweight admin system to manage portfolio content.
+
+Requirements:
+- Must work on Cloudflare FREE plan
+- No traditional backend server
+
+Use:
+- Cloudflare Workers
+- Cloudflare KV or D1 (for storage)
+
+========================
+🔐 ADMIN FEATURES
+========================
+- Simple login system (JWT or token-based)
+- Protected admin route: /admin
+
+Dashboard features:
+1. Manage Portfolio Projects
+   - Add / Edit / Delete projects
+   - Upload image URL
+   - Title + description
+
+2. Manage Experience Section
+3. Update About info
+4. View Contact Messages
+
+========================
+📩 CONTACT STORAGE
+========================
+- Store messages in:
+  → Cloudflare D1 (preferred) OR KV
+
+- Admin can:
+  - View all messages
+  - Delete messages
+
+========================
+🧠 ARCHITECTURE
+========================
+Frontend:
+- React + Vite
+
+Backend:
+- Cloudflare Workers API
+
+Routes:
+- /api/contact
+- /api/admin/login
+- /api/admin/projects
+- /api/admin/messages
+
+========================
+🎯 PERFORMANCE RULES
+========================
+- Keep admin panel lightweight
+- Lazy load admin route
+- Protect routes properly
+- Optimize queries (fast response)
+
+========================
+📱 RESPONSIVENESS
+========================
+- Admin panel also mobile-friendly
+- Clean dashboard UI (cards/table layout)
+
+========================
+📦 OUTPUT
+========================
+Provide full updated project:
+
+Frontend:
+- Fixed hero section
+- Improved UI
+- Admin panel pages
+
+Backend:
+- Worker APIs
+- Auth system
+- Database (D1/KV)
+
+Configs:
+- wrangler.toml (with bindings)
+- DB schema (if D1 used)
+
+========================
+⚠️ IMPORTANT
+========================
+- Fix hero image issue PERFECTLY (top priority)
+- Keep everything fast and clean
+- Admin system must be simple but functional
+- Must work on Cloudflare free tier
+
+Now update and generate the full improved project.
