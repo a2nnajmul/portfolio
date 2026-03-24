@@ -91,7 +91,7 @@ Express 5 API, mounted at path `/api`. Both Express server and Cloudflare Worker
 - `GET /api/blog/:id` — single blog post detail
 - `GET /api/cv` — get current CV URL
 - `GET /api/content/:section` — get content for hero, skills, or about-tabs
-- `GET /api/settings/ads` — public ad settings (returns enabled, headScript, adUnitCode)
+- `GET /api/settings/ads` — public ad settings (returns enabled + adUnitCode only; headScript is admin-only)
 
 ### Admin Routes (JWT auth required)
 - `POST /api/admin/login` — authenticate with password, returns token

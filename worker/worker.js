@@ -246,8 +246,8 @@ export default {
     }
 
     if (path === "/api/settings/ads" && request.method === "GET") {
-      const ads = kv ? await getJson(kv, "settings:ads", { enabled: false, headScript: "", adUnitCode: "" }) : { enabled: false, headScript: "", adUnitCode: "" };
-      return json({ enabled: ads.enabled, headScript: ads.headScript, adUnitCode: ads.adUnitCode }, 200, origin);
+      const ads = kv ? await getJson(kv, "settings:ads", { enabled: false, adUnitCode: "" }) : { enabled: false, adUnitCode: "" };
+      return json({ enabled: ads.enabled, adUnitCode: ads.adUnitCode }, 200, origin);
     }
 
     const contentPublicMatch = path.match(/^\/api\/content\/([^/]+)$/);

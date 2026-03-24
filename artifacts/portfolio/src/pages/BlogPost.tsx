@@ -20,28 +20,25 @@ interface BlogPostData {
 
 interface AdsSettings {
   enabled: boolean;
-  headScript: string;
   adUnitCode: string;
 }
 
-function useAdHeadScript(headScript: string | undefined, enabled: boolean | undefined) {
+function useAdSenseLoader(adUnitCode: string | undefined, enabled: boolean | undefined) {
   const injectedRef = useRef(false);
   useEffect(() => {
-    if (injectedRef.current || !enabled || !headScript) return;
-    const existing = document.querySelector('script[data-ad-head="true"]');
+    if (injectedRef.current || !enabled || !adUnitCode) return;
+    const clientMatch = adUnitCode.match(/data-ad-client=["']([^"']+)["']/);
+    if (!clientMatch) return;
+    const clientId = clientMatch[1];
+    const existing = document.querySelector(`script[src*="${clientId}"]`);
     if (existing) { injectedRef.current = true; return; }
-    const temp = document.createElement("div");
-    temp.innerHTML = headScript;
-    const scripts = temp.querySelectorAll("script");
-    scripts.forEach((src) => {
-      const s = document.createElement("script");
-      Array.from(src.attributes).forEach((attr) => s.setAttribute(attr.name, attr.value));
-      s.textContent = src.textContent;
-      s.setAttribute("data-ad-head", "true");
-      document.head.appendChild(s);
-    });
+    const s = document.createElement("script");
+    s.async = true;
+    s.crossOrigin = "anonymous";
+    s.src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${clientId}`;
+    document.head.appendChild(s);
     injectedRef.current = true;
-  }, [headScript, enabled]);
+  }, [adUnitCode, enabled]);
 }
 
 function AdSlot({ adUnitCode }: { adUnitCode: string }) {
@@ -90,7 +87,7 @@ export default function BlogPost() {
     queryFn: () => apiFetch<AdsSettings>("/settings/ads"),
   });
 
-  useAdHeadScript(adsSettings?.headScript, adsSettings?.enabled);
+  useAdSenseLoader(adsSettings?.adUnitCode, adsSettings?.enabled);
 
   const showAds = adsSettings?.enabled && adsSettings?.adUnitCode;
 
