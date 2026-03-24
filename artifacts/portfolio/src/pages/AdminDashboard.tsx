@@ -1003,19 +1003,25 @@ function SettingsTab() {
 
     setSaving(true);
     try {
-      const res = await adminFetch<{ success: boolean; token?: string }>("/admin/password", {
+      const { apiUrl, adminHeaders } = await import("@/lib/api");
+      const res = await fetch(apiUrl("/admin/password"), {
         method: "PUT",
+        headers: adminHeaders(),
         body: JSON.stringify({ currentPassword, newPassword }),
       });
-      if (res.token) {
-        localStorage.setItem("admin_token", res.token);
+      const data = await res.json() as { success?: boolean; token?: string; error?: string };
+      if (!res.ok) {
+        setError(res.status === 401 ? "Current password is incorrect" : (data.error || "Failed to change password"));
+        return;
+      }
+      if (data.token) {
+        localStorage.setItem("admin_token", data.token);
       }
       setCurrentPassword(""); setNewPassword(""); setConfirmPassword("");
       setSuccess(true);
       setTimeout(() => setSuccess(false), 5000);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : "Failed to change password";
-      setError(msg.includes("401") ? "Current password is incorrect" : msg);
+    } catch {
+      setError("Failed to change password");
     }
     finally { setSaving(false); }
   }
