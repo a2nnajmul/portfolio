@@ -118,7 +118,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative overflow-hidden bg-[#f5f0eb] dark:bg-gray-900 pb-0 md:pb-0 md:h-[100svh] md:min-h-[600px] md:max-h-[1000px] md:flex md:items-center"
+      className="relative overflow-hidden bg-[#f5f0eb] dark:bg-gray-900 pb-6 md:pb-0 md:h-[100svh] md:min-h-[600px] md:max-h-[1000px] md:flex md:items-center"
     >
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-2 md:py-0">
         <TextContent />
