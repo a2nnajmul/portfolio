@@ -1,4 +1,4 @@
-import { Facebook, Twitter, Instagram, Mail, Download } from "lucide-react";
+import { Facebook, Twitter, Instagram, Mail, Download, ArrowRight } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
 
 const socialLinks = [
@@ -77,7 +77,7 @@ export default function Hero() {
 
           <motion.div
             variants={itemVariants}
-            className="mb-8"
+            className="flex flex-col sm:flex-row items-start gap-3 mb-8"
           >
             <a
               href={`${import.meta.env.BASE_URL}Najmul_Alam_CV.pdf`}
@@ -87,6 +87,15 @@ export default function Hero() {
               <Download className="w-5 h-5 group-hover:animate-bounce" />
               Download CV
             </a>
+            <button
+              onClick={() =>
+                document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })
+              }
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-lg font-semibold border-2 border-gray-800/20 dark:border-white/20 text-gray-800 dark:text-white hover:border-primary hover:text-primary hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group backdrop-blur-sm"
+            >
+              View Work
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+            </button>
           </motion.div>
 
           <motion.div
