@@ -1,125 +1,214 @@
 /**
- * Cloudflare Worker — Portfolio Contact Form API
- * Deploy with: wrangler deploy
- * Set secret: wrangler secret put RESEND_API_KEY
+ * Cloudflare Worker — Portfolio API
+ * KV namespace: PORTFOLIO_KV (bind in wrangler.toml)
+ * Secrets: wrangler secret put RESEND_API_KEY
+ *          wrangler secret put ADMIN_PASSWORD
+ *          wrangler secret put JWT_SECRET  (optional, falls back to ADMIN_PASSWORD)
  */
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function corsHeaders(origin) {
+function corsHeaders(origin, methods = "GET, POST, PUT, DELETE, OPTIONS") {
   return {
     "Access-Control-Allow-Origin": origin || "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": methods,
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400",
   };
+}
+
+function json(data, status = 200, origin = "") {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
+  });
+}
+
+async function hmacSign(message, secret) {
+  const enc = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw", enc.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(message));
+  return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+async function hmacVerify(message, sigHex, secret) {
+  const expected = await hmacSign(message, secret);
+  if (expected.length !== sigHex.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ sigHex.charCodeAt(i);
+  return diff === 0;
+}
+
+async function createToken(env) {
+  const secret = env.JWT_SECRET || env.ADMIN_PASSWORD || "changeme";
+  const exp = Date.now() + 24 * 60 * 60 * 1000;
+  const payload = btoa(JSON.stringify({ exp })).replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, "");
+  const sig = await hmacSign(payload, secret);
+  return `${payload}.${sig}`;
+}
+
+async function verifyToken(token, env) {
+  if (!token) return false;
+  const [payload, sig] = token.split(".");
+  if (!payload || !sig) return false;
+  const secret = env.JWT_SECRET || env.ADMIN_PASSWORD || "changeme";
+  if (!await hmacVerify(payload, sig, secret)) return false;
+  try {
+    const decoded = atob(payload.replace(/-/g, "+").replace(/_/g, "/"));
+    const { exp } = JSON.parse(decoded);
+    return typeof exp === "number" && exp > Date.now();
+  } catch { return false; }
+}
+
+async function getJson(kv, key, fallback) {
+  const raw = await kv.get(key);
+  if (!raw) return fallback;
+  try { return JSON.parse(raw); } catch { return fallback; }
+}
+
+function randomId() {
+  return crypto.randomUUID();
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     const origin = request.headers.get("Origin") || "";
+    const path = url.pathname;
 
     if (request.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: corsHeaders(origin),
-      });
+      return new Response(null, { status: 204, headers: corsHeaders(origin) });
     }
 
-    if (url.pathname !== "/api/contact" || request.method !== "POST") {
-      return new Response(JSON.stringify({ error: "Not found" }), {
-        status: 404,
-        headers: {
-          "Content-Type": "application/json",
-          ...corsHeaders(origin),
-        },
-      });
+    let body = null;
+    if (["POST", "PUT", "PATCH"].includes(request.method)) {
+      try { body = await request.json(); } catch { return json({ error: "Invalid JSON" }, 400, origin); }
     }
 
-    let body;
-    try {
-      body = await request.json();
-    } catch {
-      return new Response(JSON.stringify({ success: false, error: "Invalid JSON" }), {
-        status: 400,
-        headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
-      });
+    const authHeader = request.headers.get("Authorization") || "";
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+    const kv = env.PORTFOLIO_KV;
+
+    if (path === "/api/contact" && request.method === "POST") {
+      const { name, email, message, hp } = body ?? {};
+      if (hp && hp.length > 0) return json({ success: true }, 200, origin);
+      if (!name || name.trim().length < 2) return json({ success: false, error: "Name is required (minimum 2 characters)" }, 400, origin);
+      if (!email || !isValidEmail(email.trim())) return json({ success: false, error: "A valid email address is required" }, 400, origin);
+      if (!message || message.trim().length < 10) return json({ success: false, error: "Message is required (minimum 10 characters)" }, 400, origin);
+      const sanitized = { name: name.trim().slice(0, 100), email: email.trim().slice(0, 200), message: message.trim().slice(0, 2000) };
+      if (kv) {
+        const messages = await getJson(kv, "messages", []);
+        messages.unshift({ id: randomId(), ...sanitized, createdAt: new Date().toISOString() });
+        await kv.put("messages", JSON.stringify(messages));
+      }
+      if (env.RESEND_API_KEY) {
+        try {
+          const r = await fetch("https://api.resend.com/emails", {
+            method: "POST",
+            headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ from: "Portfolio Contact <onboarding@resend.dev>", to: ["a2nnajmul@gmail.com"], subject: `Portfolio Contact from ${sanitized.name}`, text: `Name: ${sanitized.name}\nEmail: ${sanitized.email}\n\nMessage:\n${sanitized.message}`, reply_to: sanitized.email }),
+          });
+          if (!r.ok) return json({ success: false, error: "Failed to send email. Please try again." }, 500, origin);
+        } catch { return json({ success: false, error: "Failed to send email. Please try again." }, 500, origin); }
+      }
+      return json({ success: true, message: "Thank you! I'll get back to you soon." }, 200, origin);
     }
 
-    const { name, email, message, hp } = body;
-
-    if (hp && hp.length > 0) {
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
-      });
+    if (path === "/api/projects" && request.method === "GET") {
+      const projects = kv ? await getJson(kv, "projects", []) : [];
+      return json(projects, 200, origin);
     }
 
-    if (!name || name.trim().length < 2) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Name is required (minimum 2 characters)" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders(origin) } }
-      );
+    if (path === "/api/experience" && request.method === "GET") {
+      const experience = kv ? await getJson(kv, "experience", []) : [];
+      return json(experience, 200, origin);
     }
 
-    if (!email || !isValidEmail(email.trim())) {
-      return new Response(
-        JSON.stringify({ success: false, error: "A valid email address is required" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders(origin) } }
-      );
+    if (path === "/api/about" && request.method === "GET") {
+      const about = kv ? await getJson(kv, "about", { bio: "" }) : { bio: "" };
+      return json(about, 200, origin);
     }
 
-    if (!message || message.trim().length < 10) {
-      return new Response(
-        JSON.stringify({ success: false, error: "Message is required (minimum 10 characters)" }),
-        { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders(origin) } }
-      );
+    if (path === "/api/admin/login" && request.method === "POST") {
+      const { password } = body ?? {};
+      if (!env.ADMIN_PASSWORD) return json({ error: "Admin password not configured" }, 503, origin);
+      if (password !== env.ADMIN_PASSWORD) return json({ error: "Invalid password" }, 401, origin);
+      const t = await createToken(env);
+      return json({ token: t }, 200, origin);
     }
 
-    const sanitized = {
-      name: name.trim().slice(0, 100),
-      email: email.trim().slice(0, 200),
-      message: message.trim().slice(0, 2000),
-    };
+    if (path.startsWith("/api/admin/")) {
+      if (!await verifyToken(token, env)) return json({ error: "Unauthorized" }, 401, origin);
+      if (!kv) return json({ error: "KV not configured" }, 503, origin);
 
-    if (env.RESEND_API_KEY) {
-      try {
-        const emailResponse = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: "Portfolio Contact <onboarding@resend.dev>",
-            to: ["a2nnajmul@gmail.com"],
-            subject: `Portfolio Contact from ${sanitized.name}`,
-            text: `Name: ${sanitized.name}\nEmail: ${sanitized.email}\n\nMessage:\n${sanitized.message}`,
-            reply_to: sanitized.email,
-          }),
-        });
-
-        if (!emailResponse.ok) {
-          return new Response(
-            JSON.stringify({ success: false, error: "Failed to send email. Please try again." }),
-            { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders(origin) } }
-          );
+      if (path === "/api/admin/projects") {
+        if (request.method === "GET") return json(await getJson(kv, "projects", []), 200, origin);
+        if (request.method === "POST") {
+          const projects = await getJson(kv, "projects", []);
+          const p = { id: randomId(), title: String(body?.title ?? "").slice(0, 120), category: String(body?.category ?? "").slice(0, 60), description: String(body?.description ?? "").slice(0, 500), imageUrl: String(body?.imageUrl ?? "").slice(0, 500), link: String(body?.link ?? "").slice(0, 500), gradient: String(body?.gradient ?? "from-orange-400 to-rose-500").slice(0, 100), featured: Boolean(body?.featured) };
+          projects.push(p);
+          await kv.put("projects", JSON.stringify(projects));
+          return json(p, 201, origin);
         }
-      } catch {
-        return new Response(
-          JSON.stringify({ success: false, error: "Failed to send email. Please try again." }),
-          { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders(origin) } }
-        );
+      }
+
+      const projMatch = path.match(/^\/api\/admin\/projects\/(.+)$/);
+      if (projMatch) {
+        const id = projMatch[1];
+        const projects = await getJson(kv, "projects", []);
+        const idx = projects.findIndex((p) => p.id === id);
+        if (request.method === "PUT") {
+          if (idx === -1) return json({ error: "Not found" }, 404, origin);
+          projects[idx] = { ...projects[idx], ...body, id };
+          await kv.put("projects", JSON.stringify(projects));
+          return json(projects[idx], 200, origin);
+        }
+        if (request.method === "DELETE") {
+          if (idx === -1) return json({ error: "Not found" }, 404, origin);
+          projects.splice(idx, 1);
+          await kv.put("projects", JSON.stringify(projects));
+          return json({ success: true }, 200, origin);
+        }
+      }
+
+      if (path === "/api/admin/experience") {
+        if (request.method === "GET") return json(await getJson(kv, "experience", []), 200, origin);
+        if (request.method === "PUT") {
+          if (!Array.isArray(body)) return json({ error: "Expected array" }, 400, origin);
+          await kv.put("experience", JSON.stringify(body));
+          return json(body, 200, origin);
+        }
+      }
+
+      if (path === "/api/admin/about") {
+        if (request.method === "GET") return json(await getJson(kv, "about", { bio: "" }), 200, origin);
+        if (request.method === "PUT") {
+          const updated = { bio: String(body?.bio ?? "").slice(0, 2000) };
+          await kv.put("about", JSON.stringify(updated));
+          return json(updated, 200, origin);
+        }
+      }
+
+      if (path === "/api/admin/messages") {
+        if (request.method === "GET") return json(await getJson(kv, "messages", []), 200, origin);
+      }
+
+      const msgMatch = path.match(/^\/api\/admin\/messages\/(.+)$/);
+      if (msgMatch) {
+        const id = msgMatch[1];
+        if (request.method === "DELETE") {
+          const messages = await getJson(kv, "messages", []);
+          const filtered = messages.filter((m) => m.id !== id);
+          await kv.put("messages", JSON.stringify(filtered));
+          return json({ success: true }, 200, origin);
+        }
       }
     }
 
-    return new Response(
-      JSON.stringify({ success: true, message: "Thank you! I'll get back to you soon." }),
-      {
-        headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
-      }
-    );
+    return json({ error: "Not found" }, 404, origin);
   },
 };

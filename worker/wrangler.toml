@@ -1,14 +1,24 @@
-name = "najmul-portfolio-contact"
+name = "najmul-portfolio-api"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 
-[vars]
-# Set secrets using: wrangler secret put RESEND_API_KEY
+# Secrets (set via CLI):
+#   wrangler secret put RESEND_API_KEY
+#   wrangler secret put ADMIN_PASSWORD
+#   wrangler secret put JWT_SECRET    (optional — uses ADMIN_PASSWORD if omitted)
+
+# KV namespace binding:
+# 1. Create: wrangler kv namespace create PORTFOLIO_KV
+# 2. Copy the resulting id below
+[[kv_namespaces]]
+binding = "PORTFOLIO_KV"
+id = "REPLACE_WITH_YOUR_KV_NAMESPACE_ID"
 
 [[routes]]
-pattern = "your-domain.pages.dev/api/contact"
+pattern = "your-domain.pages.dev/api/*"
 zone_name = "your-domain.com"
 
-# Uncomment and update after deploying to Cloudflare Pages:
-# [env.production]
-# routes = [{ pattern = "najmulalam.com/api/contact", zone_name = "najmulalam.com" }]
+# After deploying to your custom domain, update:
+# [[routes]]
+# pattern = "najmulalam.com/api/*"
+# zone_name = "najmulalam.com"

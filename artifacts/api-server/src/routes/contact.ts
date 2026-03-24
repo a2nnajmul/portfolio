@@ -1,5 +1,7 @@
 import { Router, type IRouter, type Request, type Response } from "express";
 import { Resend } from "resend";
+import { getJson, putJson } from "../lib/kv.js";
+import { randomUUID } from "node:crypto";
 
 const router: IRouter = Router();
 
@@ -10,8 +12,28 @@ interface ContactBody {
   hp?: string;
 }
 
+interface Message {
+  id: string;
+  name: string;
+  email: string;
+  message: string;
+  createdAt: string;
+}
+
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function saveMessage(data: { name: string; email: string; message: string }) {
+  const messages = getJson<Message[]>("messages", []);
+  messages.unshift({
+    id: randomUUID(),
+    name: data.name,
+    email: data.email,
+    message: data.message,
+    createdAt: new Date().toISOString(),
+  });
+  putJson("messages", messages);
 }
 
 router.post("/contact", async (req: Request, res: Response) => {
@@ -42,6 +64,8 @@ router.post("/contact", async (req: Request, res: Response) => {
     email: email.trim().slice(0, 200),
     message: message.trim().slice(0, 2000),
   };
+
+  saveMessage(sanitized);
 
   const resendKey = process.env["RESEND_API_KEY"];
 

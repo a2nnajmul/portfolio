@@ -1,52 +1,35 @@
+import { useQuery } from "@tanstack/react-query";
 import { FadeIn } from "@/components/FadeIn";
 import { ExternalLink, Maximize2 } from "lucide-react";
+import { apiFetch } from "@/lib/api";
 
-const portfolioItems = [
-  {
-    id: 1,
-    title: "Brand Identity",
-    category: "Branding",
-    gradient: "from-orange-400 to-rose-500",
-    tag: "Featured",
-  },
-  {
-    id: 2,
-    title: "Mobile UI Design",
-    category: "UI/UX",
-    gradient: "from-blue-500 to-indigo-600",
-    tag: null,
-  },
-  {
-    id: 3,
-    title: "Creative Flyer",
-    category: "Graphic Design",
-    gradient: "from-emerald-400 to-cyan-500",
-    tag: null,
-  },
-  {
-    id: 4,
-    title: "Logo Design",
-    category: "Branding",
-    gradient: "from-purple-500 to-fuchsia-600",
-    tag: null,
-  },
-  {
-    id: 5,
-    title: "Social Media Post",
-    category: "Marketing",
-    gradient: "from-pink-500 to-rose-500",
-    tag: null,
-  },
-  {
-    id: 6,
-    title: "T-Shirt Design",
-    category: "Merchandise",
-    gradient: "from-amber-400 to-orange-500",
-    tag: null,
-  },
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  imageUrl: string;
+  link: string;
+  gradient: string;
+  featured: boolean;
+}
+
+const FALLBACK: Project[] = [
+  { id: "1", title: "Brand Identity", category: "Branding", description: "", imageUrl: "", link: "", gradient: "from-orange-400 to-rose-500", featured: true },
+  { id: "2", title: "Mobile UI Design", category: "UI/UX", description: "", imageUrl: "", link: "", gradient: "from-blue-500 to-indigo-600", featured: false },
+  { id: "3", title: "Creative Flyer", category: "Graphic Design", description: "", imageUrl: "", link: "", gradient: "from-emerald-400 to-cyan-500", featured: false },
+  { id: "4", title: "Logo Design", category: "Branding", description: "", imageUrl: "", link: "", gradient: "from-purple-500 to-fuchsia-600", featured: false },
+  { id: "5", title: "Social Media Post", category: "Marketing", description: "", imageUrl: "", link: "", gradient: "from-pink-500 to-rose-500", featured: false },
+  { id: "6", title: "T-Shirt Design", category: "Merchandise", description: "", imageUrl: "", link: "", gradient: "from-amber-400 to-orange-500", featured: false },
 ];
 
 export default function Portfolio() {
+  const { data: projects = FALLBACK } = useQuery<Project[]>({
+    queryKey: ["projects"],
+    queryFn: () => apiFetch<Project[]>("/projects"),
+    placeholderData: FALLBACK,
+  });
+
   return (
     <section id="portfolio" className="py-24 bg-secondary/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -61,7 +44,7 @@ export default function Portfolio() {
         </FadeIn>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {portfolioItems.map((item, i) => (
+          {projects.map((item, i) => (
             <FadeIn key={item.id} delay={(i % 3 + 1) * 100}>
               <div
                 className="
@@ -72,64 +55,46 @@ export default function Portfolio() {
                   border border-white/10
                 "
               >
-                {/* Gradient background */}
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${item.gradient} group-hover:scale-110 transition-transform duration-700 ease-out`}
-                />
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                ) : (
+                  <div className={`absolute inset-0 bg-gradient-to-br ${item.gradient} group-hover:scale-110 transition-transform duration-700 ease-out`} />
+                )}
 
-                {/* Subtle dot-grid overlay */}
                 <div
                   className="absolute inset-0 opacity-30"
-                  style={{
-                    backgroundImage:
-                      "radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)",
-                    backgroundSize: "20px 20px",
-                  }}
+                  style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)", backgroundSize: "20px 20px" }}
                 />
 
-                {/* Tag badge */}
-                {item.tag && (
+                {item.featured && (
                   <div className="absolute top-4 left-4 z-20">
                     <span className="px-3 py-1 text-xs font-bold bg-white/20 backdrop-blur-md text-white rounded-full border border-white/30">
-                      {item.tag}
+                      Featured
                     </span>
                   </div>
                 )}
 
-                {/* Hover overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-7 z-10">
                   <div className="translate-y-5 group-hover:translate-y-0 transition-transform duration-300">
-                    <span className="text-white/70 font-medium text-xs uppercase tracking-widest mb-1.5 block">
-                      {item.category}
-                    </span>
-                    <h3 className="text-2xl font-bold text-white mb-4 leading-tight">
-                      {item.title}
-                    </h3>
+                    <span className="text-white/70 font-medium text-xs uppercase tracking-widest mb-1.5 block">{item.category}</span>
+                    <h3 className="text-2xl font-bold text-white mb-4 leading-tight">{item.title}</h3>
+                    {item.description && <p className="text-white/70 text-sm mb-4 line-clamp-2">{item.description}</p>}
                     <div className="flex gap-3">
-                      <button
-                        aria-label="View full size"
-                        className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md text-white flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-200"
-                      >
+                      <button aria-label="View full size" className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md text-white flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-200">
                         <Maximize2 className="w-4 h-4" />
                       </button>
-                      <button
-                        aria-label="Open link"
-                        className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md text-white flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-200"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </button>
+                      {item.link && (
+                        <a href={item.link} target="_blank" rel="noopener noreferrer" aria-label="Open link" className="w-10 h-10 rounded-full bg-white/15 backdrop-blur-md text-white flex items-center justify-center hover:bg-primary hover:scale-110 transition-all duration-200">
+                          <ExternalLink className="w-4 h-4" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Default state — category chip + title */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 group-hover:opacity-0 transition-opacity duration-200 pointer-events-none">
-                  <span className="px-3 py-1 text-[11px] font-semibold bg-black/20 backdrop-blur-sm text-white/80 rounded-full uppercase tracking-widest">
-                    {item.category}
-                  </span>
-                  <h3 className="text-2xl font-display font-bold text-white drop-shadow-md text-center px-6">
-                    {item.title}
-                  </h3>
+                  <span className="px-3 py-1 text-[11px] font-semibold bg-black/20 backdrop-blur-sm text-white/80 rounded-full uppercase tracking-widest">{item.category}</span>
+                  <h3 className="text-2xl font-display font-bold text-white drop-shadow-md text-center px-6">{item.title}</h3>
                 </div>
               </div>
             </FadeIn>
