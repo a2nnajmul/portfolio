@@ -1,0 +1,94 @@
+2026-03-24T11:21:21.381515Z	Cloning repository...
+2026-03-24T11:21:22.331201Z	From https://github.com/a2nnajmul/portfolio
+2026-03-24T11:21:22.331536Z	 * branch            e69e176e1f606bbb0cdf48efa2534bb7b9c82f3d -> FETCH_HEAD
+2026-03-24T11:21:22.331609Z	
+2026-03-24T11:21:22.369915Z	HEAD is now at e69e176 fix: remove all overrides to fix Cloudflare Pages lockfile mismatch
+2026-03-24T11:21:22.370303Z	
+2026-03-24T11:21:22.41643Z	
+2026-03-24T11:21:22.416862Z	Using v2 root directory strategy
+2026-03-24T11:21:23.214035Z	Success: Finished cloning repository files
+2026-03-24T11:21:24.943876Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-03-24T11:21:24.9443Z	
+2026-03-24T11:21:26.076815Z	No Wrangler configuration file found. Continuing.
+2026-03-24T11:21:26.256244Z	Detected the following tools from environment: nodejs@20.20.0, pnpm@10.11.1
+2026-03-24T11:21:26.256904Z	Installing nodejs 20.20.0
+2026-03-24T11:21:27.10846Z	Trying to update node-build... ok
+2026-03-24T11:21:27.172265Z	To follow progress, use 'tail -f /tmp/node-build.20260324112127.796.log' or pass --verbose
+2026-03-24T11:21:27.22697Z	Downloading node-v20.20.0-linux-x64.tar.gz...
+2026-03-24T11:21:27.389552Z	-> https://nodejs.org/dist/v20.20.0/node-v20.20.0-linux-x64.tar.gz
+2026-03-24T11:21:29.680454Z	
+2026-03-24T11:21:29.680729Z	WARNING: node-v20.20.0-linux-x64 is in LTS Maintenance mode and nearing its end of life.
+2026-03-24T11:21:29.680785Z	It only receives *critical* security updates, *critical* bug fixes and documentation updates.
+2026-03-24T11:21:29.680825Z	
+2026-03-24T11:21:29.680896Z	Installing node-v20.20.0-linux-x64...
+2026-03-24T11:21:30.230647Z	Installed node-v20.20.0-linux-x64 to /opt/buildhome/.asdf/installs/nodejs/20.20.0
+2026-03-24T11:21:30.230939Z	
+2026-03-24T11:21:31.536011Z	
+2026-03-24T11:21:31.536289Z	changed 1 package in 553ms
+2026-03-24T11:21:31.550216Z	Reshimming asdf nodejs...
+2026-03-24T11:21:33.4433Z	Preparing pnpm@10.11.1 for immediate activation...
+2026-03-24T11:21:34.302868Z	SKIP_DEPENDENCY_INSTALL is present in environment. Skipping automatic dependency installation.
+2026-03-24T11:21:34.303089Z	Executing user command: pnpm install --no-frozen-lockfile && pnpm --filter @workspace/portfolio run build
+2026-03-24T11:21:34.817036Z	Scope: all 9 workspace projects
+2026-03-24T11:21:34.896739Z	Lockfile is up to date, resolution step is skipped
+2026-03-24T11:21:34.970204Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-03-24T11:21:35.056964Z	Packages: +513
+2026-03-24T11:21:35.058683Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-03-24T11:21:35.974189Z	Progress: resolved 513, reused 0, downloaded 58, added 0
+2026-03-24T11:21:36.971681Z	Progress: resolved 513, reused 0, downloaded 110, added 16
+2026-03-24T11:21:37.978724Z	Progress: resolved 513, reused 0, downloaded 172, added 37
+2026-03-24T11:21:38.980943Z	Progress: resolved 513, reused 0, downloaded 314, added 112
+2026-03-24T11:21:39.981215Z	Progress: resolved 513, reused 0, downloaded 353, added 128
+2026-03-24T11:21:40.981978Z	Progress: resolved 513, reused 0, downloaded 513, added 389
+2026-03-24T11:21:41.089778Z	Progress: resolved 513, reused 0, downloaded 513, added 513, done
+2026-03-24T11:21:41.307447Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-03-24T11:21:41.308056Z	.../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2026-03-24T11:21:41.308575Z	.../esbuild@0.18.20/node_modules/esbuild postinstall$ node install.js
+2026-03-24T11:21:41.393093Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-03-24T11:21:41.402876Z	.../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2026-03-24T11:21:41.421691Z	.../esbuild@0.18.20/node_modules/esbuild postinstall: Done
+2026-03-24T11:21:41.683886Z	
+2026-03-24T11:21:41.684168Z	devDependencies:
+2026-03-24T11:21:41.684214Z	+ prettier 3.8.1
+2026-03-24T11:21:41.684246Z	+ typescript 5.9.3
+2026-03-24T11:21:41.684274Z	
+2026-03-24T11:21:41.750725Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-03-24T11:21:41.76572Z	. preinstall: Done
+2026-03-24T11:21:41.923827Z	Done in 7.4s using pnpm v10.11.1
+2026-03-24T11:21:42.540899Z	
+2026-03-24T11:21:42.541393Z	> @workspace/portfolio@0.0.0 build /opt/buildhome/repo/artifacts/portfolio
+2026-03-24T11:21:42.54147Z	> vite build --config vite.config.ts
+2026-03-24T11:21:42.541517Z	
+2026-03-24T11:21:42.936329Z	[36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+2026-03-24T11:21:43.018355Z	transforming...
+2026-03-24T11:21:46.289484Z	[32m✓[39m 2155 modules transformed.
+2026-03-24T11:21:46.606221Z	rendering chunks...
+2026-03-24T11:21:46.727915Z	computing gzip size...
+2026-03-24T11:21:46.73952Z	[2mdist/public/[22m[32mindex.html                        [39m[1m[2m  4.44 kB[22m[1m[22m[2m │ gzip:  1.66 kB[22m
+2026-03-24T11:21:46.739816Z	[2mdist/public/[22m[2massets/[22m[35mindex-T_EIm5Lw.css         [39m[1m[2m 73.87 kB[22m[1m[22m[2m │ gzip: 11.42 kB[22m
+2026-03-24T11:21:46.739936Z	[2mdist/public/[22m[2massets/[22m[36mexternal-link-8_8UIA7i.js  [39m[1m[2m  0.25 kB[22m[1m[22m[2m │ gzip:  0.20 kB[22m
+2026-03-24T11:21:46.740025Z	[2mdist/public/[22m[2massets/[22m[36mcalendar-Cy6YXgmv.js       [39m[1m[2m  0.26 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+2026-03-24T11:21:46.74017Z	[2mdist/public/[22m[2massets/[22m[36msend-D5z4E4WJ.js           [39m[1m[2m  0.39 kB[22m[1m[22m[2m │ gzip:  0.28 kB[22m
+2026-03-24T11:21:46.740249Z	[2mdist/public/[22m[2massets/[22m[36mFadeIn-C8Vn93Pf.js         [39m[1m[2m  0.65 kB[22m[1m[22m[2m │ gzip:  0.41 kB[22m
+2026-03-24T11:21:46.740326Z	[2mdist/public/[22m[2massets/[22m[36muser-DLTybDU5.js           [39m[1m[2m  0.66 kB[22m[1m[22m[2m │ gzip:  0.40 kB[22m
+2026-03-24T11:21:46.740435Z	[2mdist/public/[22m[2massets/[22m[36mstar-DRY9dt_t.js           [39m[1m[2m  0.93 kB[22m[1m[22m[2m │ gzip:  0.45 kB[22m
+2026-03-24T11:21:46.740542Z	[2mdist/public/[22m[2massets/[22m[36mBlog-DNgtfhOc.js           [39m[1m[2m  2.52 kB[22m[1m[22m[2m │ gzip:  1.06 kB[22m
+2026-03-24T11:21:46.740752Z	[2mdist/public/[22m[2massets/[22m[36mExperience-BnE4hMkF.js     [39m[1m[2m  3.12 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
+2026-03-24T11:21:46.740869Z	[2mdist/public/[22m[2massets/[22m[36mvendor-DZ_KT744.js         [39m[1m[2m  3.66 kB[22m[1m[22m[2m │ gzip:  1.38 kB[22m
+2026-03-24T11:21:46.74097Z	[2mdist/public/[22m[2massets/[22m[36mSkills-CV5jiT3Q.js         [39m[1m[2m  4.78 kB[22m[1m[22m[2m │ gzip:  1.97 kB[22m
+2026-03-24T11:21:46.741031Z	[2mdist/public/[22m[2massets/[22m[36mPortfolio-CAUAgQDK.js      [39m[1m[2m  5.42 kB[22m[1m[22m[2m │ gzip:  1.93 kB[22m
+2026-03-24T11:21:46.741105Z	[2mdist/public/[22m[2massets/[22m[36mAbout-DnDTmqY8.js          [39m[1m[2m  6.10 kB[22m[1m[22m[2m │ gzip:  2.36 kB[22m
+2026-03-24T11:21:46.741174Z	[2mdist/public/[22m[2massets/[22m[36mContact-BwMtBknc.js        [39m[1m[2m  8.76 kB[22m[1m[22m[2m │ gzip:  2.82 kB[22m
+2026-03-24T11:21:46.741279Z	[2mdist/public/[22m[2massets/[22m[36mBlogPost-DchOQjoO.js       [39m[1m[2m 13.52 kB[22m[1m[22m[2m │ gzip:  4.51 kB[22m
+2026-03-24T11:21:46.741357Z	[2mdist/public/[22m[2massets/[22m[36mAdmin-Djem1eyt.js          [39m[1m[2m 60.15 kB[22m[1m[22m[2m │ gzip: 12.44 kB[22m
+2026-03-24T11:21:46.741408Z	[2mdist/public/[22m[2massets/[22m[36manimations-DkfS8Sva.js     [39m[1m[2m127.73 kB[22m[1m[22m[2m │ gzip: 42.17 kB[22m
+2026-03-24T11:21:46.741469Z	[2mdist/public/[22m[2massets/[22m[36mindex-N5MlS9VS.js          [39m[1m[2m296.71 kB[22m[1m[22m[2m │ gzip: 92.64 kB[22m
+2026-03-24T11:21:46.741535Z	[32m✓ built in 3.77s[39m
+2026-03-24T11:21:46.814456Z	Finished
+2026-03-24T11:21:47.506198Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-03-24T11:21:47.506694Z	
+2026-03-24T11:21:48.594377Z	No Wrangler configuration file found. Continuing.
+2026-03-24T11:21:48.594979Z	Note: No functions dir at /functions found. Skipping.
+2026-03-24T11:21:48.595057Z	Validating asset output directory
+2026-03-24T11:21:48.595116Z	Error: Output directory "dist/public" not found.
+2026-03-24T11:21:49.649047Z	Failed: build output directory not found

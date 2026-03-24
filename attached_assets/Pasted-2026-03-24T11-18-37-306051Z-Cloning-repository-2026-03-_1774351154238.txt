@@ -1,0 +1,33 @@
+2026-03-24T11:18:37.306051Z	Cloning repository...
+2026-03-24T11:18:37.884331Z	From https://github.com/a2nnajmul/portfolio
+2026-03-24T11:18:37.884631Z	 * branch            e69e176e1f606bbb0cdf48efa2534bb7b9c82f3d -> FETCH_HEAD
+2026-03-24T11:18:37.884687Z	
+2026-03-24T11:18:37.921475Z	HEAD is now at e69e176 fix: remove all overrides to fix Cloudflare Pages lockfile mismatch
+2026-03-24T11:18:37.921866Z	
+2026-03-24T11:18:37.973412Z	
+2026-03-24T11:18:37.973779Z	Using v2 root directory strategy
+2026-03-24T11:18:37.985099Z	Success: Finished cloning repository files
+2026-03-24T11:18:40.069931Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-03-24T11:18:40.070448Z	
+2026-03-24T11:18:41.163379Z	No Wrangler configuration file found. Continuing.
+2026-03-24T11:18:41.304382Z	Detected the following tools from environment: pnpm@10.11.1, nodejs@22.16.0
+2026-03-24T11:18:44.743673Z	Progress: resolved 513, reused 0, downloaded 326, added 286
+2026-03-24T11:18:46.334231Z	Progress: resolved 513, reused 0, downloaded 513, added 513, done
+2026-03-24T11:18:47.098862Z	. preinstall: Done
+2026-03-24T11:18:47.265675Z	Done in 4.9s using pnpm v10.11.1
+2026-03-24T11:18:47.306734Z	Executing user command: npm run build
+2026-03-24T11:18:48.348638Z	
+2026-03-24T11:18:48.349648Z	> workspace@0.0.0 typecheck:libs /opt/buildhome/repo
+2026-03-24T11:18:48.349867Z	> tsc --build
+2026-03-24T11:18:48.349955Z	
+2026-03-24T11:18:50.635196Z	Scope: 4 of 9 workspace projects
+2026-03-24T11:18:51.929343Z	scripts typecheck: Done
+2026-03-24T11:18:57.338580Z	Scope: 8 of 9 workspace projects
+2026-03-24T11:18:58.159239Z	artifacts/mockup-sandbox build: Failed
+2026-03-24T11:18:58.174045Z	/opt/buildhome/repo/artifacts/mockup-sandbox:
+2026-03-24T11:18:58.174279Z	 ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mockup-sandbox@2.0.0 build: `vite build`
+2026-03-24T11:18:58.174355Z	Exit status 1
+2026-03-24T11:18:58.187550Z	artifacts/portfolio build: [36mvite v7.3.1 [32mbuilding client environment for production...[36m[39m
+2026-03-24T11:18:58.234862Z	Failed: Error while executing user command. Exited with error code: 1
+2026-03-24T11:18:58.242677Z	Failed: build command exited with code: 1
+2026-03-24T11:18:59.366526Z	Failed: error occurred while running build command
