@@ -1,53 +1,42 @@
+import { useQuery } from "@tanstack/react-query";
 import { FadeIn } from "@/components/FadeIn";
-import { Palette, Layout, PenTool, Image as ImageIcon } from "lucide-react";
+import { Palette, Layout, PenTool, Image as ImageIcon, Star } from "lucide-react";
+import { apiFetch } from "@/lib/api";
+import type { LucideIcon } from "lucide-react";
 
-const coreSkills = [
-  {
-    title: "Graphic Design",
-    icon: Palette,
-    desc: "Visual concepts and creative layouts",
-    color: "from-orange-400/20 to-rose-400/10",
-    iconBg: "bg-orange-50 dark:bg-orange-950/40",
-    iconColor: "text-orange-500",
-  },
-  {
-    title: "UI/UX Design",
-    icon: Layout,
-    desc: "User-centric modern interfaces",
-    color: "from-blue-400/20 to-indigo-400/10",
-    iconBg: "bg-blue-50 dark:bg-blue-950/40",
-    iconColor: "text-blue-500",
-  },
-  {
-    title: "Adobe Illustrator",
-    icon: PenTool,
-    desc: "Vector graphics and illustrations",
-    color: "from-emerald-400/20 to-teal-400/10",
-    iconBg: "bg-emerald-50 dark:bg-emerald-950/40",
-    iconColor: "text-emerald-500",
-  },
-  {
-    title: "Adobe Photoshop",
-    icon: ImageIcon,
-    desc: "Photo editing and compositions",
-    color: "from-purple-400/20 to-fuchsia-400/10",
-    iconBg: "bg-purple-50 dark:bg-purple-950/40",
-    iconColor: "text-purple-500",
-  },
+interface SkillItem { id: string; name: string; icon: string; description: string; }
+interface SkillsContent { core: SkillItem[]; technical: string[]; }
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Palette, Layout, PenTool, Image: ImageIcon, Star,
+};
+
+const COLOR_CYCLE = [
+  { color: "from-orange-400/20 to-rose-400/10", iconBg: "bg-orange-50 dark:bg-orange-950/40", iconColor: "text-orange-500" },
+  { color: "from-blue-400/20 to-indigo-400/10", iconBg: "bg-blue-50 dark:bg-blue-950/40", iconColor: "text-blue-500" },
+  { color: "from-emerald-400/20 to-teal-400/10", iconBg: "bg-emerald-50 dark:bg-emerald-950/40", iconColor: "text-emerald-500" },
+  { color: "from-purple-400/20 to-fuchsia-400/10", iconBg: "bg-purple-50 dark:bg-purple-950/40", iconColor: "text-purple-500" },
 ];
 
-const secondarySkills = [
-  "Windows OS",
-  "Microsoft Word",
-  "Microsoft Excel",
-  "PowerPoint",
-  "Canva",
-  "English Typing",
-  "Bangla Typing",
-  "Japanese Typing",
-];
+const FALLBACK_SKILLS: SkillsContent = {
+  core: [
+    { id: "1", name: "Graphic Design", icon: "Palette", description: "Visual concepts and creative layouts" },
+    { id: "2", name: "UI/UX Design", icon: "Layout", description: "User-centric modern interfaces" },
+    { id: "3", name: "Adobe Illustrator", icon: "PenTool", description: "Vector graphics and illustrations" },
+    { id: "4", name: "Adobe Photoshop", icon: "Image", description: "Photo editing and compositions" },
+  ],
+  technical: ["Windows OS", "Microsoft Word", "Microsoft Excel", "PowerPoint", "Canva", "English Typing", "Bangla Typing", "Japanese Typing"],
+};
 
 export default function Skills() {
+  const { data: skills } = useQuery<SkillsContent>({
+    queryKey: ["content-skills"],
+    queryFn: () => apiFetch<SkillsContent>("/content/skills"),
+    placeholderData: FALLBACK_SKILLS,
+  });
+
+  const s = skills ?? FALLBACK_SKILLS;
+
   return (
     <section id="skills" className="py-16 md:py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -62,38 +51,38 @@ export default function Skills() {
         </FadeIn>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {coreSkills.map((skill, i) => (
-            <FadeIn key={skill.title} delay={(i + 1) * 100} className="h-full">
-              <div
-                className={`
-                  group h-full bg-card rounded-3xl p-8 border border-border
-                  shadow-sm hover:shadow-2xl hover:border-primary/30
-                  transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
-                  hover:-translate-y-2
-                  relative overflow-hidden flex flex-col items-center text-center
-                `}
-              >
-                {/* Gradient wash on hover */}
+          {s.core.map((skill, i) => {
+            const colors = COLOR_CYCLE[i % COLOR_CYCLE.length];
+            const Icon = ICON_MAP[skill.icon] ?? Star;
+            return (
+              <FadeIn key={skill.id} delay={(i + 1) * 100} className="h-full">
                 <div
-                  className={`absolute inset-0 bg-gradient-to-br ${skill.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl`}
-                />
-
-                {/* Icon */}
-                <div
-                  className={`relative z-10 w-20 h-20 rounded-2xl ${skill.iconBg} ${skill.iconColor} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}
+                  className={`
+                    group h-full bg-card rounded-3xl p-8 border border-border
+                    shadow-sm hover:shadow-2xl hover:border-primary/30
+                    transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                    hover:-translate-y-2
+                    relative overflow-hidden flex flex-col items-center text-center
+                  `}
                 >
-                  <skill.icon className="w-10 h-10" strokeWidth={1.5} />
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${colors.color} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl`}
+                  />
+                  <div
+                    className={`relative z-10 w-20 h-20 rounded-2xl ${colors.iconBg} ${colors.iconColor} flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300`}
+                  >
+                    <Icon className="w-10 h-10" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="relative z-10 text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-200">
+                    {skill.name}
+                  </h3>
+                  <p className="relative z-10 text-muted-foreground leading-relaxed text-sm">
+                    {skill.description}
+                  </p>
                 </div>
-
-                <h3 className="relative z-10 text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors duration-200">
-                  {skill.title}
-                </h3>
-                <p className="relative z-10 text-muted-foreground leading-relaxed text-sm">
-                  {skill.desc}
-                </p>
-              </div>
-            </FadeIn>
-          ))}
+              </FadeIn>
+            );
+          })}
         </div>
 
         <FadeIn
@@ -104,7 +93,7 @@ export default function Skills() {
             Technical &amp; Office Skills
           </h3>
           <div className="flex flex-wrap justify-center gap-3 md:gap-4">
-            {secondarySkills.map((skill) => (
+            {s.technical.map((skill) => (
               <span
                 key={skill}
                 className="px-5 py-2.5 rounded-full bg-background border border-border text-foreground font-medium shadow-sm hover:border-primary hover:text-primary hover:-translate-y-1 hover:shadow-md transition-all duration-200 cursor-default"

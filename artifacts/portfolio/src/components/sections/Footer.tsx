@@ -40,7 +40,7 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-bold mb-6 font-display">Quick Links</h4>
             <ul className="space-y-3 text-background/70">
-              {['Home', 'About', 'Skills', 'Portfolio', 'Contact'].map(link => (
+              {['Home', 'About', 'Skills', 'Portfolio', 'Blog', 'Contact'].map(link => (
                 <li key={link}>
                   <button 
                     onClick={() => {

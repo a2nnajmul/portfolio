@@ -8,6 +8,7 @@ const About = lazy(() => import("@/components/sections/About"));
 const Skills = lazy(() => import("@/components/sections/Skills"));
 const Experience = lazy(() => import("@/components/sections/Experience"));
 const Portfolio = lazy(() => import("@/components/sections/Portfolio"));
+const Blog = lazy(() => import("@/components/sections/Blog"));
 const Contact = lazy(() => import("@/components/sections/Contact"));
 
 export default function Home() {
@@ -30,6 +31,9 @@ export default function Home() {
       </Suspense>
       <Suspense fallback={<div className="py-24 bg-secondary/30" />}>
         <Portfolio />
+      </Suspense>
+      <Suspense fallback={<div className="py-24 bg-background" />}>
+        <Blog />
       </Suspense>
       <Suspense fallback={<div className="py-24 bg-secondary/50" />}>
         <Contact />

@@ -3,7 +3,7 @@ import { Menu, X, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 
-const NAV_LINKS = ["Home", "About", "Skills", "Experience", "Portfolio", "Contact"];
+const NAV_LINKS = ["Home", "About", "Skills", "Experience", "Portfolio", "Blog", "Contact"];
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);

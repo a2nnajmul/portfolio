@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import Home from "@/pages/Home";
 
 const AdminShell = lazy(() => import("@/pages/Admin"));
+const BlogPost = lazy(() => import("@/pages/BlogPost"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,6 +22,11 @@ function App() {
           <Route path="/admin" nest>
             <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><span className="text-muted-foreground">Loading…</span></div>}>
               <AdminShell />
+            </Suspense>
+          </Route>
+          <Route path="/blog/:id">
+            <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><span className="text-muted-foreground">Loading…</span></div>}>
+              <BlogPost />
             </Suspense>
           </Route>
           <Route path="/">

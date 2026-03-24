@@ -1,5 +1,27 @@
 import { Facebook, Twitter, Instagram, Mail, Download, ArrowRight } from "lucide-react";
 import { motion, type Variants } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api";
+
+interface HeroContent {
+  name: string;
+  greeting: string;
+  title: string;
+  buttonPrimary: string;
+  buttonSecondary: string;
+}
+
+interface CVData {
+  url: string;
+}
+
+const FALLBACK_HERO: HeroContent = {
+  name: "Najmul Alam",
+  greeting: "Hi, I'm",
+  title: "Student & Graphic Designer",
+  buttonPrimary: "Download CV",
+  buttonSecondary: "View Work",
+};
 
 const socialLinks = [
   { icon: Facebook, href: "https://facebook.com/a2nnajmul", label: "Facebook" },
@@ -40,6 +62,21 @@ function BannerPicture({ className }: { className?: string }) {
 }
 
 function TextContent() {
+  const { data: hero } = useQuery<HeroContent>({
+    queryKey: ["content-hero"],
+    queryFn: () => apiFetch<HeroContent>("/content/hero"),
+    placeholderData: FALLBACK_HERO,
+  });
+
+  const { data: cv } = useQuery<CVData>({
+    queryKey: ["cv"],
+    queryFn: () => apiFetch<CVData>("/cv"),
+    placeholderData: { url: "" },
+  });
+
+  const h = hero ?? FALLBACK_HERO;
+  const cvUrl = cv?.url || `${import.meta.env.BASE_URL}Najmul_Alam_CV.pdf`;
+
   return (
     <motion.div
       variants={containerVariants}
@@ -51,21 +88,21 @@ function TextContent() {
         variants={itemVariants}
         className="text-base sm:text-lg md:text-xl font-medium text-gray-600 dark:text-gray-300 mb-0.5"
       >
-        Hi, I'm
+        {h.greeting}
       </motion.h2>
 
       <motion.h1
         variants={itemVariants}
         className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-extrabold tracking-tight mb-1.5 md:mb-3 text-gray-900 dark:text-white"
       >
-        Najmul Alam
+        {h.name}
       </motion.h1>
 
       <motion.h3
         variants={itemVariants}
         className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-display font-bold text-primary mb-5 md:mb-8"
       >
-        Student &amp; Graphic Designer
+        {h.title}
       </motion.h3>
 
       <motion.div
@@ -73,12 +110,14 @@ function TextContent() {
         className="flex flex-row items-center gap-3 mb-5 md:mb-8"
       >
         <a
-          href={`${import.meta.env.BASE_URL}Najmul_Alam_CV.pdf`}
-          download
+          href={cvUrl}
+          download={!cv?.url}
+          target={cv?.url ? "_blank" : undefined}
+          rel={cv?.url ? "noopener noreferrer" : undefined}
           className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-semibold bg-primary text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group text-sm sm:text-base"
         >
           <Download className="w-4 h-4 sm:w-5 sm:h-5 group-hover:animate-bounce" />
-          Download CV
+          {h.buttonPrimary}
         </a>
         <button
           onClick={() =>
@@ -86,7 +125,7 @@ function TextContent() {
           }
           className="inline-flex items-center gap-2 px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-semibold border-2 border-gray-800/20 dark:border-white/20 text-gray-800 dark:text-white hover:border-primary hover:text-primary hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group backdrop-blur-sm text-sm sm:text-base"
         >
-          View Work
+          {h.buttonSecondary}
           <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-200" />
         </button>
       </motion.div>
