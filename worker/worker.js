@@ -10,11 +10,26 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+const ALLOWED_ORIGINS = [
+  "https://najmulalam.site",
+  "https://www.najmulalam.site",
+];
+
+function isAllowedOrigin(origin) {
+  if (!origin) return false;
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  if (origin.endsWith(".pages.dev")) return true;
+  if (origin.includes("replit.dev") || origin.includes("repl.co")) return true;
+  return false;
+}
+
 function corsHeaders(origin, methods = "GET, POST, PUT, DELETE, OPTIONS") {
+  const allowedOrigin = isAllowedOrigin(origin) ? origin : ALLOWED_ORIGINS[0];
   return {
-    "Access-Control-Allow-Origin": origin || "*",
+    "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": methods,
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Credentials": "true",
     "Access-Control-Max-Age": "86400",
   };
 }

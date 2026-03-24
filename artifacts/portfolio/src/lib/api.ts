@@ -1,7 +1,19 @@
 const BASE = import.meta.env.BASE_URL?.replace(/\/$/, "");
 
+const PROD_API = "https://api.najmulalam.site";
+
+function getApiBase(): string {
+  if (typeof window !== "undefined") {
+    const host = window.location.hostname;
+    if (host === "najmulalam.site" || host === "www.najmulalam.site" || host.endsWith(".pages.dev")) {
+      return PROD_API;
+    }
+  }
+  return `${BASE}`;
+}
+
 export function apiUrl(path: string): string {
-  return `${BASE}/api${path}`;
+  return `${getApiBase()}/api${path}`;
 }
 
 export function adminHeaders(): HeadersInit {
