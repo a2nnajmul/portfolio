@@ -58,7 +58,7 @@ export default function Hero() {
             variants={itemVariants}
             className="text-lg md:text-xl font-medium text-gray-600 dark:text-gray-300 mb-1"
           >
-            Hi, I`m
+            Hi, I'm
           </motion.h2>
 
           <motion.h1
@@ -82,7 +82,7 @@ export default function Hero() {
             <a
               href={`${import.meta.env.BASE_URL}Najmul_Alam_CV.pdf`}
               download
-              className="inline-flex items-center gap-2 px-7 py-3 rounded-lg font-semibold bg-primary text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-semibold bg-primary text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group"
             >
               <Download className="w-5 h-5 group-hover:animate-bounce" />
               Download CV
@@ -91,7 +91,7 @@ export default function Hero() {
               onClick={() =>
                 document.getElementById("portfolio")?.scrollIntoView({ behavior: "smooth" })
               }
-              className="inline-flex items-center gap-2 px-7 py-3 rounded-lg font-semibold border-2 border-gray-800/20 dark:border-white/20 text-gray-800 dark:text-white hover:border-primary hover:text-primary hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group backdrop-blur-sm"
+              className="inline-flex items-center gap-2 px-7 py-3 rounded-full font-semibold border-2 border-gray-800/20 dark:border-white/20 text-gray-800 dark:text-white hover:border-primary hover:text-primary hover:-translate-y-1 active:translate-y-0 transition-all duration-300 group backdrop-blur-sm"
             >
               View Work
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
