@@ -37,43 +37,43 @@ export default function Blog() {
             <p className="text-muted-foreground">No blog posts yet. Check back soon!</p>
           </FadeIn>
         ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {posts.map((post, i) => (
-            <FadeIn key={post.id} delay={(i % 3 + 1) * 100}>
-              <Link
-                href={`/blog/${post.id}`}
-                className="group block bg-card rounded-3xl overflow-hidden border border-border shadow-sm hover:shadow-2xl hover:border-primary/30 hover:-translate-y-2 transition-all duration-300"
-              >
-                {post.imageUrl ? (
-                  <div className="aspect-[16/9] overflow-hidden">
-                    <img
-                      src={post.imageUrl}
-                      alt={post.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {posts.map((post, i) => (
+              <FadeIn key={post.id} delay={(i % 3 + 1) * 100}>
+                <Link
+                  href={`/blog/${post.id}`}
+                  className="group block bg-card rounded-3xl overflow-hidden border border-border shadow-sm hover:shadow-2xl hover:border-primary/30 hover:-translate-y-2 transition-all duration-300"
+                >
+                  {post.imageUrl ? (
+                    <div className="aspect-[16/9] overflow-hidden">
+                      <img
+                        src={post.imageUrl}
+                        alt={post.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/9] bg-gradient-to-br from-primary/20 to-orange-400/10" />
+                  )}
+                  <div className="p-6">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
+                      <Calendar className="w-4 h-4" />
+                      <span>{post.date}</span>
+                    </div>
+                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
+                      {post.description}
+                    </p>
+                    <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm group-hover:gap-2.5 transition-all">
+                      Read More <ArrowRight className="w-4 h-4" />
+                    </span>
                   </div>
-                ) : (
-                  <div className="aspect-[16/9] bg-gradient-to-br from-primary/20 to-orange-400/10" />
-                )}
-                <div className="p-6">
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-3">
-                    <Calendar className="w-4 h-4" />
-                    <span>{post.date}</span>
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                    {post.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm line-clamp-3 mb-4">
-                    {post.description}
-                  </p>
-                  <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm group-hover:gap-2.5 transition-all">
-                    Read More <ArrowRight className="w-4 h-4" />
-                  </span>
-                </div>
-              </Link>
-            </FadeIn>
-          ))}
-        </div>
+                </Link>
+              </FadeIn>
+            ))}
+          </div>
         )}
       </div>
     </section>
