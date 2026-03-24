@@ -67,7 +67,7 @@ export default function Portfolio() {
                 className="
                   group relative aspect-[4/3] rounded-3xl overflow-hidden cursor-pointer
                   shadow-lg hover:shadow-2xl
-                  transition-all duration-400 ease-[cubic-bezier(0.34,1.56,0.64,1)]
+                  transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)]
                   hover:-translate-y-2
                   border border-white/10
                 "
