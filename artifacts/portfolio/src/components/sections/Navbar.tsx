@@ -56,7 +56,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex-shrink-0 cursor-pointer" onClick={() => scrollTo("home")}>
             <span className="font-display font-bold text-2xl tracking-tight">
-              Najmul<span className="text-primary">.</span>
+              Najmul A<span className="text-primary">.</span>
             </span>
           </div>
 

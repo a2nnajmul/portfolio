@@ -13,7 +13,7 @@ export default function Footer() {
           
           <div className="lg:col-span-2">
             <span className="font-display font-bold text-3xl tracking-tight mb-4 inline-block">
-              Najmul<span className="text-primary">.</span>
+              Najmul A<span className="text-primary">.</span>
             </span>
             <p className="text-background/70 max-w-md mb-6 text-lg">
               A creative Graphic Designer passionate about crafting memorable brand identities, logo designs, and modern UI/UX experiences.

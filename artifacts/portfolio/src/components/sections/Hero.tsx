@@ -118,13 +118,13 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative overflow-hidden bg-[#f5f0eb] dark:bg-gray-900 pb-6 md:pb-0 md:h-[100svh] md:min-h-[600px] md:max-h-[1000px] md:flex md:items-center"
+      className="relative overflow-hidden bg-[#f5f0eb] dark:bg-gray-900 pb-6 md:pb-0 md:h-[80svh] md:min-h-[500px] md:max-h-[800px] md:flex md:items-center"
     >
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-2 md:py-0">
         <TextContent />
       </div>
 
-      <div className="relative w-full mt-4 md:mt-0 aspect-[4/5] max-h-[60vh] sm:aspect-[4/3] sm:max-h-none md:absolute md:inset-0 md:aspect-auto md:w-full md:h-full overflow-hidden">
+      <div className="relative w-full mt-4 md:mt-0 aspect-[3/2] max-h-[45vh] sm:aspect-[5/3] sm:max-h-[50vh] overflow-hidden md:absolute md:inset-0 md:aspect-auto md:max-h-none md:w-full md:h-full">
         <BannerPicture className="w-full h-full object-cover object-[70%_center] md:object-[right_center]" />
 
         <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-[#f5f0eb]/95 to-transparent dark:from-gray-900/95 md:hidden pointer-events-none" />
