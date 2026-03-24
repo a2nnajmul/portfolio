@@ -2,26 +2,25 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 
 const TOKEN_TTL_MS = 24 * 60 * 60 * 1000;
 
-function secret(): string {
-  return process.env["ADMIN_PASSWORD"] ?? "dev-secret";
-}
-
-function sign(payload: string): string {
-  return createHmac("sha256", secret()).update(payload).digest("hex");
+function getSecret(): string | null {
+  return process.env["ADMIN_PASSWORD"] ?? null;
 }
 
 export function createToken(): string {
+  const s = getSecret();
+  if (!s) throw new Error("ADMIN_PASSWORD not configured");
   const exp = Date.now() + TOKEN_TTL_MS;
   const payload = Buffer.from(JSON.stringify({ exp })).toString("base64url");
-  const sig = sign(payload);
+  const sig = createHmac("sha256", s).update(payload).digest("hex");
   return `${payload}.${sig}`;
 }
 
 export function verifyToken(token: string): boolean {
-  if (!token) return false;
+  const s = getSecret();
+  if (!s || !token) return false;
   const [payload, sig] = token.split(".");
   if (!payload || !sig) return false;
-  const expectedSig = sign(payload);
+  const expectedSig = createHmac("sha256", s).update(payload).digest("hex");
   try {
     if (!timingSafeEqual(Buffer.from(sig, "hex"), Buffer.from(expectedSig, "hex"))) return false;
   } catch {
