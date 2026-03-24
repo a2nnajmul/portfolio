@@ -1,0 +1,80 @@
+2026-03-24T12:22:46.951Z	Initializing build environment...
+2026-03-24T12:22:46.951Z	Initializing build environment...
+2026-03-24T12:22:48.557Z	Success: Finished initializing build environment
+2026-03-24T12:22:50.181Z	Cloning repository...
+2026-03-24T12:22:51.604Z	Restoring from dependencies cache
+2026-03-24T12:22:51.607Z	Restoring from build output cache
+2026-03-24T12:22:51.609Z	Detected the following tools from environment: pnpm@10.11.1, nodejs@22.16.0
+2026-03-24T12:22:51.728Z	Installing project dependencies: pnpm install --frozen-lockfile
+2026-03-24T12:22:52.877Z	Scope: all 9 workspace projects
+2026-03-24T12:22:52.974Z	Lockfile is up to date, resolution step is skipped
+2026-03-24T12:22:53.057Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-03-24T12:22:53.257Z	Packages: +513
+2026-03-24T12:22:53.257Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-03-24T12:22:54.060Z	Progress: resolved 513, reused 0, downloaded 9, added 0
+2026-03-24T12:22:55.060Z	Progress: resolved 513, reused 0, downloaded 133, added 118
+2026-03-24T12:22:56.061Z	Progress: resolved 513, reused 0, downloaded 255, added 245
+2026-03-24T12:22:57.062Z	Progress: resolved 513, reused 0, downloaded 299, added 288
+2026-03-24T12:22:58.062Z	Progress: resolved 513, reused 0, downloaded 326, added 314
+2026-03-24T12:22:59.064Z	Progress: resolved 513, reused 0, downloaded 330, added 315
+2026-03-24T12:23:00.064Z	Progress: resolved 513, reused 0, downloaded 364, added 354
+2026-03-24T12:23:01.066Z	Progress: resolved 513, reused 0, downloaded 423, added 407
+2026-03-24T12:23:01.992Z	Progress: resolved 513, reused 0, downloaded 513, added 513, done
+2026-03-24T12:23:02.257Z	.../esbuild@0.18.20/node_modules/esbuild postinstall$ node install.js
+2026-03-24T12:23:02.267Z	.../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2026-03-24T12:23:02.267Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-03-24T12:23:02.367Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-03-24T12:23:02.407Z	.../esbuild@0.18.20/node_modules/esbuild postinstall: Done
+2026-03-24T12:23:02.414Z	.../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2026-03-24T12:23:02.734Z	
+2026-03-24T12:23:02.735Z	devDependencies:
+2026-03-24T12:23:02.735Z	+ prettier 3.8.1
+2026-03-24T12:23:02.736Z	+ typescript 5.9.3
+2026-03-24T12:23:02.736Z	
+2026-03-24T12:23:02.804Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-03-24T12:23:02.815Z	. preinstall: Done
+2026-03-24T12:23:02.994Z	Done in 10.7s
+2026-03-24T12:23:03.157Z	Executing user build command: pnpm run build
+2026-03-24T12:23:03.672Z	
+2026-03-24T12:23:03.672Z	> workspace@0.0.0 build /opt/buildhome/repo
+2026-03-24T12:23:03.672Z	> pnpm run typecheck && pnpm -r --if-present run build
+2026-03-24T12:23:03.672Z	
+2026-03-24T12:23:04.038Z	
+2026-03-24T12:23:04.039Z	> workspace@0.0.0 typecheck /opt/buildhome/repo
+2026-03-24T12:23:04.039Z	> pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+2026-03-24T12:23:04.039Z	
+2026-03-24T12:23:04.417Z	
+2026-03-24T12:23:04.417Z	> workspace@0.0.0 typecheck:libs /opt/buildhome/repo
+2026-03-24T12:23:04.417Z	> tsc --build
+2026-03-24T12:23:04.417Z	
+2026-03-24T12:23:07.607Z	Scope: 4 of 9 workspace projects
+2026-03-24T12:23:07.610Z	artifacts/api-server typecheck$ tsc -p tsconfig.json --noEmit
+2026-03-24T12:23:07.611Z	artifacts/portfolio typecheck$ tsc -p tsconfig.json --noEmit
+2026-03-24T12:23:07.611Z	scripts typecheck$ tsc -p tsconfig.json --noEmit
+2026-03-24T12:23:07.611Z	artifacts/mockup-sandbox typecheck$ tsc -p tsconfig.json --noEmit
+2026-03-24T12:23:10.830Z	scripts typecheck: Done
+2026-03-24T12:23:13.751Z	artifacts/api-server typecheck: Done
+2026-03-24T12:23:18.528Z	artifacts/portfolio typecheck: Done
+2026-03-24T12:23:19.839Z	artifacts/mockup-sandbox typecheck: Done
+2026-03-24T12:23:20.267Z	Scope: 8 of 9 workspace projects
+2026-03-24T12:23:20.269Z	artifacts/mockup-sandbox build$ vite build
+2026-03-24T12:23:20.270Z	artifacts/portfolio build$ vite build --config vite.config.ts
+2026-03-24T12:23:20.800Z	artifacts/portfolio build: vite v7.3.1 building client environment for production...
+2026-03-24T12:23:20.825Z	artifacts/mockup-sandbox build: failed to load config from /opt/buildhome/repo/artifacts/mockup-sandbox/vite.config.ts
+2026-03-24T12:23:20.825Z	artifacts/mockup-sandbox build: error during build:
+2026-03-24T12:23:20.826Z	artifacts/mockup-sandbox build: Error: PORT environment variable is required but was not provided.
+2026-03-24T12:23:20.826Z	artifacts/mockup-sandbox build:     at file:///opt/buildhome/repo/artifacts/mockup-sandbox/node_modules/.vite-temp/vite.config.ts.timestamp-1774355000577-de0c2649a2403.mjs:145:9
+2026-03-24T12:23:20.826Z	artifacts/mockup-sandbox build:     at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+2026-03-24T12:23:20.829Z	artifacts/mockup-sandbox build:     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+2026-03-24T12:23:20.834Z	artifacts/mockup-sandbox build:     at async loadConfigFromBundledFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.1_@types+node@25.3.5_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35909:12)
+2026-03-24T12:23:20.834Z	artifacts/mockup-sandbox build:     at async bundleAndLoadConfigFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.1_@types+node@25.3.5_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35797:17)
+2026-03-24T12:23:20.834Z	artifacts/mockup-sandbox build:     at async loadConfigFromFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.1_@types+node@25.3.5_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35764:42)
+2026-03-24T12:23:20.835Z	artifacts/mockup-sandbox build:     at async resolveConfig (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.1_@types+node@25.3.5_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:35413:22)
+2026-03-24T12:23:20.835Z	artifacts/mockup-sandbox build:     at async createBuilder (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.1_@types+node@25.3.5_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/chunks/config.js:33875:19)
+2026-03-24T12:23:20.835Z	artifacts/mockup-sandbox build:     at async CAC.<anonymous> (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.1_@types+node@25.3.5_jiti@2.6.1_lightningcss@1.31.1_tsx@4.21.0_yaml@2.8.2/node_modules/vite/dist/node/cli.js:629:10)
+2026-03-24T12:23:20.852Z	artifacts/mockup-sandbox build: Failed
+2026-03-24T12:23:20.856Z	/opt/buildhome/repo/artifacts/mockup-sandbox:
+2026-03-24T12:23:20.856Z	 ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mockup-sandbox@2.0.0 build: `vite build`
+2026-03-24T12:23:20.856Z	Exit status 1
+2026-03-24T12:23:20.885Z	 ELIFECYCLE  Command failed with exit code 1.
+2026-03-24T12:23:20.912Z	Failed: error occurred while running build command

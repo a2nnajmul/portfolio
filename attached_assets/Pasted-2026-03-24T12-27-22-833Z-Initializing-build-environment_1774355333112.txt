@@ -1,0 +1,79 @@
+2026-03-24T12:27:22.833Z	Initializing build environment...
+2026-03-24T12:27:24.303Z	Success: Finished initializing build environment
+2026-03-24T12:27:25.721Z	Cloning repository...
+2026-03-24T12:27:27.075Z	Detected the following tools from environment: pnpm@10.11.1, nodejs@22.16.0
+2026-03-24T12:27:27.077Z	Restoring from dependencies cache
+2026-03-24T12:27:27.078Z	Restoring from build output cache
+2026-03-24T12:27:27.189Z	SKIP_DEPENDENCY_INSTALL is present in environment. Skipping automatic dependency installation.
+2026-03-24T12:27:27.305Z	Executing user build command: pnpm install --no-frozen-lockfile && pnpm --filter @workspace/portfolio run build
+2026-03-24T12:27:28.281Z	Scope: all 9 workspace projects
+2026-03-24T12:27:28.357Z	Lockfile is up to date, resolution step is skipped
+2026-03-24T12:27:28.459Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-03-24T12:27:28.564Z	Packages: +513
+2026-03-24T12:27:28.564Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-03-24T12:27:29.461Z	Progress: resolved 513, reused 0, downloaded 11, added 0
+2026-03-24T12:27:30.461Z	Progress: resolved 513, reused 0, downloaded 116, added 107
+2026-03-24T12:27:31.463Z	Progress: resolved 513, reused 0, downloaded 251, added 239
+2026-03-24T12:27:32.464Z	Progress: resolved 513, reused 0, downloaded 294, added 283
+2026-03-24T12:27:33.464Z	Progress: resolved 513, reused 0, downloaded 323, added 310
+2026-03-24T12:27:34.469Z	Progress: resolved 513, reused 0, downloaded 325, added 310
+2026-03-24T12:27:35.470Z	Progress: resolved 513, reused 0, downloaded 369, added 357
+2026-03-24T12:27:36.470Z	Progress: resolved 513, reused 0, downloaded 424, added 415
+2026-03-24T12:27:37.171Z	Progress: resolved 513, reused 0, downloaded 513, added 513, done
+2026-03-24T12:27:37.443Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-03-24T12:27:37.444Z	.../esbuild@0.18.20/node_modules/esbuild postinstall$ node install.js
+2026-03-24T12:27:37.444Z	.../esbuild@0.25.12/node_modules/esbuild postinstall$ node install.js
+2026-03-24T12:27:37.637Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-03-24T12:27:37.641Z	.../esbuild@0.18.20/node_modules/esbuild postinstall: Done
+2026-03-24T12:27:37.646Z	.../esbuild@0.25.12/node_modules/esbuild postinstall: Done
+2026-03-24T12:27:37.966Z	
+2026-03-24T12:27:37.971Z	devDependencies:
+2026-03-24T12:27:37.971Z	+ prettier 3.8.1
+2026-03-24T12:27:37.971Z	+ typescript 5.9.3
+2026-03-24T12:27:37.971Z	
+2026-03-24T12:27:38.020Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-03-24T12:27:38.030Z	. preinstall: Done
+2026-03-24T12:27:38.203Z	Done in 10.5s
+2026-03-24T12:27:38.654Z	
+2026-03-24T12:27:38.654Z	> @workspace/portfolio@0.0.0 build /opt/buildhome/repo/artifacts/portfolio
+2026-03-24T12:27:38.654Z	> vite build --config vite.config.ts
+2026-03-24T12:27:38.654Z	
+2026-03-24T12:27:39.935Z	vite v7.3.1 building client environment for production...
+2026-03-24T12:27:40.025Z	transforming...
+2026-03-24T12:27:44.226Z	✓ 2155 modules transformed.
+2026-03-24T12:27:44.473Z	rendering chunks...
+2026-03-24T12:27:44.655Z	computing gzip size...
+2026-03-24T12:27:44.722Z	dist/public/index.html                          4.44 kB │ gzip:  1.66 kB
+2026-03-24T12:27:44.722Z	dist/public/assets/index-T_EIm5Lw.css          73.87 kB │ gzip: 11.42 kB
+2026-03-24T12:27:44.723Z	dist/public/assets/external-link-CmLNAv-5.js    0.25 kB │ gzip:  0.20 kB
+2026-03-24T12:27:44.727Z	dist/public/assets/calendar-Ynrep3Wu.js         0.26 kB │ gzip:  0.21 kB
+2026-03-24T12:27:44.727Z	dist/public/assets/send-7YzdVw0A.js             0.39 kB │ gzip:  0.28 kB
+2026-03-24T12:27:44.727Z	dist/public/assets/FadeIn-yBJ2kG5i.js           0.65 kB │ gzip:  0.41 kB
+2026-03-24T12:27:44.727Z	dist/public/assets/user-Dr08rjpF.js             0.66 kB │ gzip:  0.40 kB
+2026-03-24T12:27:44.727Z	dist/public/assets/star-CzTet2PK.js             0.93 kB │ gzip:  0.46 kB
+2026-03-24T12:27:44.727Z	dist/public/assets/Blog-DZClWpaK.js             2.52 kB │ gzip:  1.06 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/Experience-DIHwY-b3.js       3.12 kB │ gzip:  1.38 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/vendor-DZ_KT744.js           3.66 kB │ gzip:  1.38 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/Skills-BySsdZjI.js           4.78 kB │ gzip:  1.97 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/Portfolio-BqaXSULo.js        5.42 kB │ gzip:  1.93 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/About-DIib4W_R.js            6.10 kB │ gzip:  2.36 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/Contact-BmLyEA3q.js          8.76 kB │ gzip:  2.82 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/BlogPost-kiyvAmIS.js        13.52 kB │ gzip:  4.51 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/Admin-CTGcR74y.js           60.15 kB │ gzip: 12.44 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/animations-DkfS8Sva.js     127.73 kB │ gzip: 42.17 kB
+2026-03-24T12:27:44.728Z	dist/public/assets/index-BKsjLLUZ.js          296.91 kB │ gzip: 92.72 kB
+2026-03-24T12:27:44.728Z	✓ built in 4.74s
+2026-03-24T12:27:44.823Z	Success: Build command completed
+2026-03-24T12:27:44.967Z	Executing user deploy command: npx wrangler deploy
+2026-03-24T12:27:46.468Z	npm warn exec The following package was not found and will be installed: wrangler@4.77.0
+2026-03-24T12:27:55.917Z	
+2026-03-24T12:27:55.917Z	 ⛅️ wrangler 4.77.0
+2026-03-24T12:27:55.917Z	───────────────────
+2026-03-24T12:27:56.289Z	
+2026-03-24T12:27:56.289Z	Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+2026-03-24T12:27:56.290Z	
+2026-03-24T12:27:56.359Z	✘ [ERROR] The Wrangler application detection logic has been run in the root of a workspace instead of targeting a specific project. Change your working directory to one of the applications in the workspace and try again.
+2026-03-24T12:27:56.359Z	
+2026-03-24T12:27:56.359Z	
+2026-03-24T12:27:56.388Z	🪵  Logs were written to "/opt/buildhome/.config/.wrangler/logs/wrangler-2026-03-24_12-27-55_129.log"
+2026-03-24T12:27:56.506Z	Failed: error occurred while running deploy command
