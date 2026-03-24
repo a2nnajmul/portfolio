@@ -1,0 +1,181 @@
+You are a senior full-stack engineer specializing in Cloudflare Workers, D1/KV, and admin dashboard systems.
+
+I already have a working portfolio website with an admin panel.
+
+Your task is to UPGRADE and EXTEND the existing admin system — NOT rebuild it.
+
+========================
+🎯 OBJECTIVE
+========================
+Enhance the existing admin panel with:
+1. Blog management system
+2. CV file management
+3. Full section editing capability
+4. Admin password change feature
+
+Maintain existing structure, improve it cleanly.
+
+========================
+⚠️ IMPORTANT RULE
+========================
+- DO NOT rebuild the project
+- ONLY extend and upgrade existing admin panel
+- Keep UI consistent with current design
+
+========================
+📝 BLOG SYSTEM (NEW)
+========================
+Add a "Blog" section in admin dashboard.
+
+Features:
+- Add new blog post
+  - Title
+  - Description
+  - Content (rich text or textarea)
+  - Image URL
+  - Date
+
+- Edit blog post
+- Delete blog post
+- List all posts (table or cards)
+
+Frontend:
+- Create blog section/page
+- Display posts dynamically
+- Clean card/grid layout
+
+Storage:
+- Use Cloudflare D1 (preferred) or KV
+
+========================
+📄 CV MANAGEMENT (NEW)
+========================
+Add "Manage CV" section in admin panel.
+
+Features:
+- Upload or update CV file (PDF)
+- Store CV URL/path in database
+- Replace old CV automatically
+
+Frontend:
+- "Download CV" button dynamically fetches latest CV
+- No hardcoded file
+
+========================
+🧩 FULL WEBSITE CONTROL (UPGRADE)
+========================
+Admin must be able to edit ALL sections:
+
+Editable sections:
+- Hero:
+  - Name
+  - Title
+  - Subtitle
+  - Buttons text
+
+- About:
+  - Description
+  - Tabs content
+
+- Skills:
+  - Add/Edit/Delete skills
+
+- Experience:
+  - Add/Edit/Delete entries
+
+- Portfolio:
+  - Already exists → improve if needed
+
+All data must be dynamic (fetched from backend)
+
+========================
+🔐 PASSWORD CHANGE FEATURE (NEW)
+========================
+Add "Change Password" option in admin panel.
+
+Features:
+- Input:
+  - Current password
+  - New password
+  - Confirm password
+
+Backend:
+- Verify current password
+- Hash new password
+- Update securely
+
+Security:
+- Use hashing (bcrypt or equivalent)
+- Store securely (D1 or environment)
+
+========================
+📩 CONTACT MANAGEMENT (IMPROVE)
+========================
+- Admin can:
+  - View messages
+  - Delete messages
+
+- Add:
+  - Mark as read/unread
+
+========================
+🧠 BACKEND (CLOUDFLARE)
+========================
+Use:
+- Cloudflare Workers
+- Cloudflare D1 (preferred)
+
+API routes:
+- /api/admin/blog
+- /api/admin/cv
+- /api/admin/content
+- /api/admin/password
+- /api/admin/messages
+
+========================
+📱 ADMIN UI IMPROVEMENT
+========================
+- Clean dashboard layout
+- Sidebar navigation
+- Sections:
+  - Dashboard
+  - Blog
+  - CV Manager
+  - Content Editor
+  - Messages
+  - Settings (password)
+
+- Mobile responsive
+
+========================
+⚡ PERFORMANCE
+========================
+- Lightweight admin panel
+- Lazy load sections
+- Fast API response
+
+========================
+📦 OUTPUT
+========================
+- Updated frontend (admin panel UI)
+- Updated backend (Workers + DB schema)
+- New DB tables (for blog, content, CV, auth)
+
+========================
+🧪 VALIDATION
+========================
+Ensure:
+✅ Blog can be added/edited/deleted  
+✅ CV updates dynamically  
+✅ All sections editable  
+✅ Password change works securely  
+✅ Admin panel UI clean and responsive  
+
+========================
+⚠️ FINAL RULE
+========================
+- Extend existing system ONLY
+- Do not break current features
+- Keep everything fast and clean
+
+Now upgrade the admin panel accordingly.
